@@ -1,0 +1,64 @@
+/* Harvard Law School Color Palette
+   ==========================================================================
+*/
+
+.ink {
+    background-color: #1E1E1E !important
+}
+
+.slate {
+    background-color: #8996A0 !important
+}
+
+.mortar {
+    background-color: #8C8179 !important
+}
+
+.shade {
+    background-color: #BAC5C6 !important
+}
+
+.disabled-color {
+    background-color: #DFDFDF !important;
+    color: #9F9F9F !important
+}
+
+.parchment {
+    background-color: #F3F3F1 !important
+}
+
+.crimson {
+    background-color: #A51C30 !important
+}
+
+.indigo {
+    background-color: #293352 !important
+}
+
+.ivy {
+    background-color: #52854C !important
+}
+
+.saffron {
+    background-color: #D16103 !important
+}
+
+.bluebonnet {
+    background-color: #4E84C4 !important
+}
+
+.pear {
+    background-color: #C3D7A4 !important
+}
+
+.gold {
+    background-color: #C4961A !important
+}
+
+.lemon {
+    background-color: #FFDB6D !important
+}
+
+.creme {
+    background-color: #F4EDCA !important
+}
