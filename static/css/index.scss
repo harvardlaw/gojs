@@ -1,10 +1,43 @@
-// harvard colors
+// harvard colors https://hls.harvard.edu/content/uploads/2016/01/HLS_Graphic_Identity_2016.pdf
 $ink: #1e1e1e;
 $slate: #8996a0;
 $mortar: #8c8179;
 $shade: #bac5c6;
 $parchment: #f3f3f1;
 $crimson: #a51c30;
+$saffron: #D16103;
+// Grey color palette https://www.google.com/design/spec/style/color.html
+$grey50: #FAFAFA; /* Grey 50  */
+$grey100: #F5F5F5; /* Grey 100 */
+$grey200: #EEEEEE; /* Grey 200 */
+$grey300: #E0E0E0; /* Grey 300 */
+$grey400: #BDBDBD; /* Grey 400 */
+$grey500: #9E9E9E; /* Grey 500 */
+$grey600: #757575; /* Grey 600 */
+$grey700: #616161; /* Grey 700 */
+$grey800: #424242; /* Grey 800 */
+$grey900: #212121; /* Grey 900 */
+
+.inspector {
+  display: inline-block;
+  font: bold 14px helvetica, sans-serif;
+  background-color: $grey900;
+  color: $grey100;
+  cursor: default;
+}
+
+.inspector input {
+  background-color: $grey800;
+  color: $grey100;
+  font: bold 12px helvetica, sans-serif;
+  border: 0px;
+  padding: 2px;
+}
+
+.inspector input:disabled {
+  background-color: $grey400;
+  color: $grey700;
+}
 
 html {
   height: 100%;
@@ -35,13 +68,33 @@ body {
 
 #preview {
   width:100%;
+  text-align: center;
 
-  h3 {
+  .js-editTitleText {
     color: $ink;
+    display: inline;
+    font-size: 1.5rem;
+    border:none;
+  }
+
+  .js-editTitleField {
+    color: $saffron;
+    display: inline;
+    font-size: 1.5rem;
+    border-bottom: 1px solid $saffron;
+    display: none;
   }
 
   input[type="text"] {
     font-size: 1.5rem;
+  }
+
+  .js-editIcon {
+    color: $grey500;
+  }
+
+  .js-editIcon:hover {
+    color: $saffron;
   }
 }
 

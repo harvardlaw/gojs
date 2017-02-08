@@ -2,11 +2,13 @@
   <div class="card">
     <div class="card-content">
 
-      <label id="card_subtext" for="STUDENT_NAMEtextbox" data-error="Unable to Validate Input" data-success="Great!" class="">
-        <h3 class="card-title center-align">
+      <div class="editQuestionWrapper">
+        <h3 class="card-title center-align js-editTitleText">
           Hello, what is your name?
         </h3>
-      </label>
+        <input type="text" class="card-title center-align js-editTitleField" readonly="true" placeholder="Hello, what is your name?"/>
+        <i class="material-icons md-18 js-editIcon">mode_edit</i>
+      </div>
 
       <div class="input-field col s12">
         <i class="material-icons prefix">language</i>

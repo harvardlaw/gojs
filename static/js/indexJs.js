@@ -395,5 +395,35 @@ $(function(){
     // so the GraphLinksModel needs to set these property names:
     // linkFromPortIdProperty and linkToPortIdProperty.
   }
-  
+
+  var editTitleField = false;
+
+  $('.js-editIcon').on('click', function(e){
+    $(this).hide();
+    $(this).siblings('.js-editTitleText').hide();
+    $(this).siblings('.js-editTitleField').show();
+    $(this).siblings('.js-editTitleField').prop('readonly', false);
+    var titleText = $(this).siblings('.js-editTitleText').html();
+    $(this).siblings('.js-editTitleField').attr('placeholder', titleText);
+    $(this).siblings('.js-editTitleField').focus();
+    editTitleField = true;
+  });
+
+  $('.js-editTitleField').focusout(function(e){
+    var editedText = $('.js-editTitleField').val();
+    $('.js-editTitleField').val("");
+    $(this).hide();
+    $(this).siblings('.js-editIcon').show();
+    $(this).siblings('.js-editTitleText').show();
+    $(this).siblings('.js-editTitleText').html(editedText);
+    $(this).closest('.form-group').find('.editable-field').prop('readonly', true);
+    editTitleField = false;
+  });
+
+  $('.js-editTitleField').keydown(function (e){
+    if(e.keyCode == 13){
+        $(this).focusout();
+    }
+  });
+
 });

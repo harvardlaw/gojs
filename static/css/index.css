@@ -1,3 +1,31 @@
+/* Grey 50  */
+/* Grey 100 */
+/* Grey 200 */
+/* Grey 300 */
+/* Grey 400 */
+/* Grey 500 */
+/* Grey 600 */
+/* Grey 700 */
+/* Grey 800 */
+/* Grey 900 */
+.inspector {
+  display: inline-block;
+  font: bold 14px helvetica, sans-serif;
+  background-color: #212121;
+  color: #F5F5F5;
+  cursor: default; }
+
+.inspector input {
+  background-color: #424242;
+  color: #F5F5F5;
+  font: bold 12px helvetica, sans-serif;
+  border: 0px;
+  padding: 2px; }
+
+.inspector input:disabled {
+  background-color: #BDBDBD;
+  color: #616161; }
+
 html {
   height: 100%; }
 
@@ -22,11 +50,25 @@ body {
     margin-right: 10px; }
 
 #preview {
-  width: 100%; }
-  #preview h3 {
-    color: #1e1e1e; }
+  width: 100%;
+  text-align: center; }
+  #preview .js-editTitleText {
+    color: #1e1e1e;
+    display: inline;
+    font-size: 1.5rem;
+    border: none; }
+  #preview .js-editTitleField {
+    color: #D16103;
+    display: inline;
+    font-size: 1.5rem;
+    border-bottom: 1px solid #D16103;
+    display: none; }
   #preview input[type="text"] {
     font-size: 1.5rem; }
+  #preview .js-editIcon {
+    color: #9E9E9E; }
+  #preview .js-editIcon:hover {
+    color: #D16103; }
 
 #mySavedModel {
   display: none; }
