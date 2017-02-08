@@ -1,28 +1,27 @@
-<div class="col s12" id="STUDENT_NAME_CARD" style="margin-top: 10%;">
-    <div class="card">
-        <div class="card-content">
+<div class="col s12" id="STUDENT_NAME_CARD">
+  <div class="card">
+    <div class="card-content">
 
+      <label id="card_subtext" for="STUDENT_NAMEtextbox" data-error="Unable to Validate Input" data-success="Great!" class="">
+        <h3 class="card-title center-align">
+          Hello, what is your name?
+        </h3>
+      </label>
 
-            <h3 class="card-title center-align">Hello, what is your name?</h3>
+      <div class="input-field col s12">
+        <i class="material-icons prefix">language</i>
+        <input id="STUDENT_NAME" class="validate" type="text" pattern=".{1,}" placeholder="Student's Name">
+      </div>
 
-
-            <div class="input-field col s12">
-                <i class="material-icons prefix">language</i>
-                <input id="STUDENT_NAME" class="validate" type="text" pattern=".{1,}" onchange="enable_buttons(this)" onkeyup="enable_buttons(this)" data-auto_complete="" data-auto_populate="nan" onfocus="auto_populate(this)">
-
-                <label id="card_subtext" for="STUDENT_NAMEtextbox" data-error="Unable to Validate Input" data-success="Great!" class="">Student's Name</label>
-            </div>
-
-
-            <div class="row center">
-
+      <div class="row center">
         <button class="btn-large waves-effect waves-white" disabled="" name="STUDENT_NAME_BUTTON" value="Next" onclick="update_page(
-                        'STUDENT_NAME',
-                        'textbox',
-                        'Next');">
-            Next
+        'STUDENT_NAME',
+        'textbox',
+        'Next');">
+          Next
         </button>
-</div>
-        </div>
+      </div>
+
     </div>
+  </div>
 </div>

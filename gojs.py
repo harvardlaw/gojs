@@ -9,9 +9,7 @@ def hello_world():
     #     stable = myfile.read()
 
     # return render_template('index.html', passin=stable)
-
-
-    return render_template('port.html')
+    return render_template('index.html')
 
 
 @app.route('/postdata/', methods = ['GET', 'POST'])
