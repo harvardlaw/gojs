@@ -65,10 +65,34 @@ body {
     display: none; }
   #preview input[type="text"] {
     font-size: 1.5rem; }
-  #preview .js-editIcon {
+  #preview .js-editAnswerType {
+    display: inline-block;
+    width: 90%; }
+  #preview .js-editTitleIcon, #preview .js-editIconIcon {
     color: #9E9E9E; }
-  #preview .js-editIcon:hover {
-    color: #D16103; }
+  #preview .js-editIconIcon {
+    display: inline-block;
+    position: absolute;
+    width: 0rem; }
+  #preview .js-editTitleIcon:hover, #preview .js-editIconIcon:hover {
+    color: #D16103;
+    cursor: pointer; }
+
+.js-editIconOptions {
+  padding-right: 3rem;
+  padding-top: 0.5rem;
+  height: 2.2rem;
+  width: 5%;
+  display: inline-block; }
+
+.iconOption {
+  cursor: pointer;
+  position: absolute;
+  background: transparent;
+  box-shadow: 0;
+  opacity: 0;
+  transition: .5s all;
+  display: inline-block; }
 
 #mySavedModel {
   display: none; }
