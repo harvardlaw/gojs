@@ -41,7 +41,8 @@ $(function(){
       $(".js-buttonWrapper").empty();
       for (i = 0; i < part.data.rightArray.length; i++) {
         var currentButtonText = part.data.rightArray[i].name;
-        buttonStr += '<button class="btn-large waves-effect waves-white js-buttonEditIcon">' + currentButtonText + '</button>';
+        buttonStr += '<div class="js-editButtonWrapper"><input type="text" class="btn-large js-editButtonField" id="css-buttonField" placeholder="Next" pattern=".{0,15}" />';
+        buttonStr += '<button class="btn-large waves-effect waves-white js-editButtonIcon">' + currentButtonText + '</button></div>';
       }
       $(".js-buttonWrapper").html(buttonStr);
       var iconText = (part.data.card_icon == null) ? account_circle : part.data.card_icon;
@@ -82,15 +83,30 @@ $(function(){
       makeButton("Copy",
       function(e, obj) { e.diagram.commandHandler.copySelection(); }),
       makeButton("Delete",
-      function(e, obj) { e.diagram.commandHandler.deleteSelection(); }),
+      function(e, obj) {
+        e.diagram.commandHandler.deleteSelection();
+        layout();
+      }),
       GO(go.Shape, "LineH", {  strokeWidth: 3,
         height: 1,
         stretch: go.GraphObject.Horizontal
     }),
 
     makeButton("Add Answer",
-    function (e, obj) {
-      addPort("right"); })
+      function (e, obj) {
+        addPort("right");
+        var buttonStr = "";
+        $(".js-buttonWrapper").empty();
+        if (currentNodeData !== null) var currentRightArray =  currentNodeData.rightArray;
+        for (i = 0; i < currentRightArray.length; i++) {
+          var currentButtonText = currentRightArray[i].name;
+          buttonStr += '<div class="js-editButtonWrapper"><input type="text" class="btn-large js-editButtonField" id="css-buttonField" placeholder="Next" pattern=".{0,15}" />';
+          buttonStr += '<button class="btn-large waves-effect waves-white js-editButtonIcon">' + currentButtonText + '</button></div>';
+        }
+        $(".js-buttonWrapper").html(buttonStr);
+        layout();
+      })
+
     );
 
   var portSize = new go.Size(100, 40);
@@ -377,7 +393,6 @@ $(function(){
       $(this).siblings('.js-editTitleIcon').show();
       $(this).siblings('.js-editTitleText').show();
       $(this).siblings('.js-editTitleText').html(editedText);
-      $(this).closest('.form-group').find('.editable-field').prop('readonly', true);
       editTitleField = false;
       if (currentNodeData !== null) myDiagram.model.setDataProperty(currentNodeData, "name", editedText);
     }
@@ -427,6 +442,45 @@ $(function(){
       e.target.innerText = currentIcon;
       if (currentNodeData !== null) myDiagram.model.setDataProperty(currentNodeData, "card_icon", selectedIcon);
     }
+  });
+
+  var editButtonField = false;
+
+  $('.js-buttonWrapper').on("click", ".js-editButtonIcon", function(e){
+    $(this).hide();
+    $(this).siblings('.js-editButtonField').show();
+    var buttonText = $(this).html();
+    $(this).siblings('.js-editButtonField').val(buttonText);
+    $(this).siblings('.js-editButtonField').focus();
+    editButtonField = true;
+  });
+
+  $('.js-buttonWrapper').on("focusout", function(e){
+    if (editButtonField == true) {
+      var editedText = $(e.target).val();
+      $(e.target).val("");
+      $(e.target).hide();
+      $(e.target).siblings('.js-editButtonIcon').show();
+      if (editedText != "") $(e.target).siblings('.js-editButtonIcon').html(editedText);
+      else $(e.target).siblings('.js-editButtonIcon').html("NEXT");
+      editButtonField = false;
+      var i = $('.js-editButtonField').index($(e.target));
+      if (currentNodeData !== null) myDiagram.model.setDataProperty(currentNodeData.rightArray[i], "name", editedText); //currentNodeData.rightArray[i].name = editedText;
+    }
+  });
+
+  $('.js-buttonWrapper').on("keydown", ".js-editButtonField",function (e){
+    if(e.keyCode == 13){
+        $(this).focusout();
+    }
+  });
+
+  $('.js-layoutButton').click(function(e) {
+    layout();
+  });
+
+  $('.js-loadButton').click(function(e) {
+    load();
   });
 
 });

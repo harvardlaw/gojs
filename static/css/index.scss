@@ -78,7 +78,6 @@ body {
   }
 
   input[type="text"] {
-    font-size: 1.5rem;
     overflow: scroll;
   }
 
@@ -125,10 +124,31 @@ body {
   display: none;
 }
 
-.js-buttonEditIcon {
+.js-editButtonWrapper {
+  display: inline-block;
+}
+
+.js-editButtonIcon {
   margin-left: 5px;
   margin-right: 5px;
   min-width: 50px;
   overflow: scroll;
   display: inline-block;
+  text-transform: uppercase;
+}
+
+#css-buttonField {
+  background-color: $saffron;
+  border-bottom: 1px solid white;
+  color: white;
+  max-width: 75px;
+  margin-left: 5px;
+  margin-right: 5px;
+  margin-bottom: 0px;
+  display: none;
+  text-transform: uppercase;
+  height: 54px;
+  cursor: text;
+  padding: 0 2rem;
+  border-radius: 2px;
 }
