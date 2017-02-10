@@ -11,7 +11,6 @@
       <link href="http://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
 
       <script src="../static/js/go.js"></script>
-      <script src="../static/js/DataInspector.js"></script>
       <script src="../static/js/postback.js"></script>
       <script src="https://ajax.googleapis.com/ajax/libs/jquery/2.1.1/jquery.min.js"></script>
       <script src="../static/js/indexJs.js"></script>
@@ -28,15 +27,12 @@
     <button onclick="layout()">Layout</button>
   </div>
   <div id="preview">
-    <div class="container">
+    <div class="js-previewNoCard"> Click on a card above to edit it.</div>
+    <div class="container js-previewContainer">
       {% include 'error_card.html' %}
     </div>
   </div>
   <br>
-
-  <span style="display: inline-block; vertical-align: top;">
-    <div id="myInspectorDiv" class="inspector"> </div><br>
-  </span>
 
   <textarea id="mySavedModel">
     {% include 'datum.html' %}

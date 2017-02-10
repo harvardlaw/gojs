@@ -1,6 +1,8 @@
 $(function(){
 
   var GO = go.GraphObject.make;  //for conciseness in defining node templates
+  var currentKeyID = null;
+  var currentNodeData = null;
 
   myDiagram =
   GO(go.Diagram, "myDiagramDiv",  //Diagram refers to its DIV HTML element by id
@@ -22,71 +24,33 @@ $(function(){
     myDiagram.addDiagramListener("LayoutCompleted", function(e) {
       myDiagram.nodes.each(function(node) {
         if (node.category === "Recycle") {
-          alert('hi');
+          console.log('Node Recycled.');
           return;
         }
         node.minLocation = new go.Point(node.location.x, -Infinity);
       });
     });
 
-    var inspector = new Inspector('myInspectorDiv', myDiagram, {
-      // uncomment this line to only inspect the named properties below instead of all properties on each object:
-      includesOwnProperties: true,
-      properties: {
-        "name": {},
-        "first_button":{},
-        // key would be automatically added for nodes, but we want to declare it read-only also:
-        "key": { readOnly: true, show: Inspector.showIfPresent },
-        // color would be automatically added for nodes, but we want to declare it a color also:
-        "color": { show: Inspector.showIfPresent, type: 'color' },
-        "type": {  },
-        "KEY_NAME": {  },
-        "group": {  },
-        "LOGIC": {  },
-        "VALIDATION": {  },
-        "Action": {  },
-        "ICON_ATTRIBUTE": {  },
-        "card_auto_populate": {  },
-        "card_text": {  },
-        "card_subtext": {  },
-        "card_id": {  },
-        "card_pattern": {  },
-        "card_type": {  },
-        "card_buttons": {  },
-        "card_class": {  },
-        "card_icon": {  },
-        "card_helptext": {  },
-        "goto_key": {  },
-        "SubText": {  },
-        "newproprties": {  },
-        // Comments and LinkComments are not in any node or link data (yet), so we add them here:
-        "Comments": { show: Inspector.showIfNode  },
-        "flag": { show: Inspector.showIfNode, type: 'boolean', defaultValue: true  },
-        "LinkComments": { show: Inspector.showIfLink }
-      }
-    });
-
     myDiagram.addDiagramListener('ObjectSingleClicked', function(e) {
-      var myElement = document.querySelector("#preview");
-      myElement.style.backgroundColor = "#f6f6f6";
-      myElement.style.display = "";
+      $('.js-previewNoCard').css("display", "none");
+      var myElement = document.querySelector(".js-previewContainer");
+      myElement.style.display = "block";
       var part = e.subject.part;
-      document.getElementsByClassName("card-title center-align")[0].textContent=part.data.name;
-      document.getElementsByClassName('btn-large waves-effect waves-white')[0].textContent = part.data.rightArray[0].name;
-      document.getElementsByClassName('material-icons prefix')[0].textContent = part.data.card_icon;
-      document.getElementById('STUDENT_NAME').setAttribute("placeholder", part.data.card_subtext);
-
-      var ifyy = part.data.card_icon;
-      var ifxy = part.data.card_subtext;
-      if (ifxy == null) {
-        document.getElementById('card_subtext').textContent = "Obligatory text"
+      $(".js-editTitleText").text(part.data.name);
+      var buttonStr = "";
+      $(".js-buttonWrapper").empty();
+      for (i = 0; i < part.data.rightArray.length; i++) {
+        var currentButtonText = part.data.rightArray[i].name;
+        buttonStr += '<button class="btn-large waves-effect waves-white js-buttonEditIcon">' + currentButtonText + '</button>';
       }
-      if (ifyy == null) {
-        document.getElementsByClassName('material-icons prefix')[0].textContent = "face"
-      }
-
-      var xyz = part.data.rightArray;
-      postdata(part.data);
+      $(".js-buttonWrapper").html(buttonStr);
+      var iconText = (part.data.card_icon == null) ? account_circle : part.data.card_icon;
+      $("#selectedIcon").text(iconText);
+      var placeholderText = (part.data.card_subtext == null) ? "Answer here" : part.data.card_subtext;
+      $(".js-editAnswerType").attr("placeholder", placeholderText);
+      currentKeyID = part.data.key;
+      currentNodeData = myDiagram.model.findNodeDataForKey(currentKeyID);
+      //postdata(part.data);
     });
 
     myDiagram.addDiagramListener('InitialLayoutCompleted', function(e) {
@@ -337,10 +301,6 @@ $(function(){
   };
   // end DragLinkingTool
 
-
-
-
-
   function layout() {
     myDiagram.layoutDiagram(true);
     myDiagram.selection.each(function(node) {
@@ -419,6 +379,7 @@ $(function(){
       $(this).siblings('.js-editTitleText').html(editedText);
       $(this).closest('.form-group').find('.editable-field').prop('readonly', true);
       editTitleField = false;
+      if (currentNodeData !== null) myDiagram.model.setDataProperty(currentNodeData, "name", editedText);
     }
   });
 
@@ -464,7 +425,7 @@ $(function(){
       var currentIcon = $('#selectedIcon').text();
       $('#selectedIcon').text(selectedIcon);
       e.target.innerText = currentIcon;
-      $
+      if (currentNodeData !== null) myDiagram.model.setDataProperty(currentNodeData, "card_icon", selectedIcon);
     }
   });
 

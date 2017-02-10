@@ -17,88 +17,6 @@ $grey600: #757575; /* Grey 600 */
 $grey700: #616161; /* Grey 700 */
 $grey800: #424242; /* Grey 800 */
 $grey900: #212121; /* Grey 900 */
-// TRIG FUNCTIONS
-
-$pi: 3.14159265359;
-$_precision: 10;
-
-@function pow($base, $exp) {
-  $value: $base;
-  @if $exp > 1 {
-    @for $i from 2 through $exp {
-      $value: $value * $base;
-    }
-  }
-  @if $exp < 1{
-    @for $i from 0 through -$exp {
-      $value: $value / $base;
-    }
-  }
-  @return $value;
-}
-
-@function fact($num) {
-  $fact: 1;
-  @if $num > 0{
-    @for $i from 1 through $num {
-      $fact: $fact * $i;
-    }
-  }
-  @return $fact;
-}
-
-@function _to_unitless_rad($angle) {
-  @if unit($angle) == "deg" {
-    $angle: $angle / 180deg * $pi;
-  }
-  @if unit($angle) == "rad" {
-    $angle: $angle / 1rad;
-  }
-  @return $angle;
-}
-
-@function sin($angle){
-  $a: _to_unitless_rad($angle);
-  $sin: $a;
-  @for $n from 1 through $_precision {
-    $sin: $sin + (pow(-1, $n) / fact(2 * $n + 1) ) * pow($a, (2 * $n + 1));
-  }
-  @return $sin;
-}
-
-@function cos($angle){
-  $a: _to_unitless_rad($angle);
-  $cos: 1;
-  @for $n from 1 through $_precision {
-    $cos: $cos + ( pow(-1,$n) / fact(2*$n) ) * pow($a,2*$n);
-  }
-  @return $cos;
-}
-
-@function tan($angle){
-  @return sin($angle) / cos($angle);
-}
-
-.inspector {
-  display: inline-block;
-  font: bold 14px helvetica, sans-serif;
-  background-color: $grey900;
-  color: $grey100;
-  cursor: default;
-}
-
-.inspector input {
-  background-color: $grey800;
-  color: $grey100;
-  font: bold 12px helvetica, sans-serif;
-  border: 0px;
-  padding: 2px;
-}
-
-.inspector input:disabled {
-  background-color: $grey400;
-  color: $grey700;
-}
 
 html {
   height: 100%;
@@ -131,6 +49,19 @@ body {
   width:100%;
   text-align: center;
 
+
+  .js-previewNoCard {
+    margin-top: 100px;
+    font-style: italic;
+    color: $mortar;
+    font-size: 3rem;
+    text-align: center;
+  }
+
+  .js-previewContainer {
+    display:none;
+  }
+
   .js-editTitleText {
     color: $ink;
     display: inline;
@@ -148,6 +79,7 @@ body {
 
   input[type="text"] {
     font-size: 1.5rem;
+    overflow: scroll;
   }
 
   .js-editAnswerType {
@@ -191,4 +123,12 @@ body {
 
 #mySavedModel {
   display: none;
+}
+
+.js-buttonEditIcon {
+  margin-left: 5px;
+  margin-right: 5px;
+  min-width: 50px;
+  overflow: scroll;
+  display: inline-block;
 }

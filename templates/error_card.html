@@ -1,12 +1,10 @@
-<div class="col s12" id="STUDENT_NAME_CARD">
+<div class="col s12">
   <div class="card">
     <div class="card-content">
 
       <div class="editQuestionWrapper">
-        <h3 class="card-title center-align js-editTitleText">
-          Hello, what is your name?
-        </h3>
-        <input type="text" class="card-title center-align js-editTitleField" readonly="true" placeholder="Hello, what is your name?"/>
+        <h3 class="card-title center-align js-editTitleText">Hello, what is your name?</h3>
+        <input type="text" class="card-title center-align js-editTitleField" readonly="true" placeholder="Hello, what is your name?" pattern=".{0,64}"/>
         <i class="material-icons md-18 js-editTitleIcon">mode_edit</i>
       </div>
 
@@ -20,16 +18,11 @@
           <div class="iconOption"><i class="material-icons prefix js-editIconIcon">attach_file</i></div>
           <div class="iconOption"><i class="material-icons prefix js-editIconIcon">attach_money</i></div>
         </div>
-        <input id="STUDENT_NAME" class="js-editAnswerType" type="text" pattern=".{1,}" placeholder="Student's Name" />
+        <input class="js-editAnswerType" type="text" pattern=".{1,}" placeholder="Student's Name" />
       </div>
 
-      <div class="row center">
-        <button class="btn-large waves-effect waves-white" disabled="" name="STUDENT_NAME_BUTTON" value="Next" onclick="update_page(
-        'STUDENT_NAME',
-        'textbox',
-        'Next');">
-          Next
-        </button>
+      <div class="row center js-buttonWrapper">
+
       </div>
 
     </div>
