@@ -37,21 +37,15 @@ $(function(){
       myElement.style.display = "block";
       var part = e.subject.part;
       $(".js-editTitleText").text(part.data.name);
-      var buttonStr = "";
-      $(".js-buttonWrapper").empty();
-      for (i = 0; i < part.data.rightArray.length; i++) {
-        var currentButtonText = part.data.rightArray[i].name;
-        buttonStr += '<div class="js-editButtonWrapper"><input type="text" class="btn-large js-editButtonField" id="css-buttonField" placeholder="Next" pattern=".{0,15}" />';
-        buttonStr += '<button class="btn-large waves-effect waves-white js-editButtonIcon">' + currentButtonText + '</button></div>';
-      }
-      $(".js-buttonWrapper").html(buttonStr);
-      var iconText = (part.data.card_icon == null) ? account_circle : part.data.card_icon;
+      editButtons(part.data.rightArray);
+      var iconText = (part.data.card_icon == null) ? "face" : part.data.card_icon;
       $("#selectedIcon").text(iconText);
       var placeholderText = (part.data.card_subtext == null) ? "Answer here" : part.data.card_subtext;
       $(".js-editAnswerType").attr("placeholder", placeholderText);
       currentKeyID = part.data.key;
       currentNodeData = myDiagram.model.findNodeDataForKey(currentKeyID);
-      //postdata(part.data);
+      if (part.data.rightArray.length <= 1) $('.js-removeAnswerButton').attr("disabled", true);
+      else $('.js-removeAnswerButton').attr("disabled", false);
     });
 
     myDiagram.addDiagramListener('InitialLayoutCompleted', function(e) {
@@ -78,50 +72,21 @@ $(function(){
       visiblePredicate ? new go.Binding("visible", "", visiblePredicate).ofObject() : {});
     }
 
-    var nodeMenu =  // context menu for each Node
+    /*var nodeMenu =  // context menu for each Node
     GO(go.Adornment, "Vertical",
-      makeButton("Copy",
-      function(e, obj) { e.diagram.commandHandler.copySelection(); }),
       makeButton("Delete",
-      function(e, obj) {
-        e.diagram.commandHandler.deleteSelection();
-        layout();
+        function(e, obj) {
+          e.diagram.commandHandler.deleteSelection();
+          layout();
       }),
-      GO(go.Shape, "LineH", {  strokeWidth: 3,
-        height: 1,
-        stretch: go.GraphObject.Horizontal
-    }),
-
-    makeButton("Add Answer",
-      function (e, obj) {
-        addPort("right");
-        var buttonStr = "";
-        $(".js-buttonWrapper").empty();
-        if (currentNodeData !== null) var currentRightArray =  currentNodeData.rightArray;
-        for (i = 0; i < currentRightArray.length; i++) {
-          var currentButtonText = currentRightArray[i].name;
-          buttonStr += '<div class="js-editButtonWrapper"><input type="text" class="btn-large js-editButtonField" id="css-buttonField" placeholder="Next" pattern=".{0,15}" />';
-          buttonStr += '<button class="btn-large waves-effect waves-white js-editButtonIcon">' + currentButtonText + '</button></div>';
-        }
-        $(".js-buttonWrapper").html(buttonStr);
-        layout();
+      makeButton("Add Answer",
+        function (e, obj) {
+          addRightPort();
       })
-
-    );
+    );*/
 
   var portSize = new go.Size(100, 40);
   var smallsize = new go.Size(10, 10);
-  var portMenu =  // context menu for each port
-  GO(go.Adornment, "Vertical",
-    makeButton("Remove port",
-    // in the click event handler, the obj.part is the Adornment;
-    // its adornedObject is the port
-    function (e, obj) { removePort(obj.part.adornedObject); }),
-    makeButton("Change color",
-    function (e, obj) { changeColor(obj.part.adornedObject); }),
-    makeButton("Remove side ports",
-    function (e, obj) { removeAll(obj.part.adornedObject); })
-  );
 
   // the node template
   // includes a panel on each side with an itemArray of panels containing ports
@@ -129,8 +94,8 @@ $(function(){
   GO(go.Node, "Table",
     { locationObjectName: "BODY",
     locationSpot: go.Spot.Center,
-    selectionObjectName: "BODY",
-    contextMenu: nodeMenu
+    selectionObjectName: "BODY"//,
+    //contextMenu: nodeMenu
     },
   new go.Binding("location", "loc", go.Point.parse).makeTwoWay(go.Point.stringify),
 
@@ -170,8 +135,8 @@ $(function(){
       fromLinkable: true,
       toLinkable: true,
 
-      cursor: "pointer",
-      contextMenu: portMenu
+      cursor: "pointer"//,
+      //contextMenu: portMenu
     },
     new go.Binding("portId", "portId"),
     GO(go.Shape, "Circle",
@@ -198,8 +163,9 @@ $(function(){
       fromLinkable: true,
       toLinkable: true,
 
-      cursor: "pointer",
-      contextMenu: portMenu },
+      cursor: "pointer"//,
+      //contextMenu: portMenu
+    },
       new go.Binding("portId", "portId"),
       GO(go.Shape, "Rectangle",
       { stroke: null,
@@ -222,14 +188,14 @@ $(function(){
     );  // end Node
 
     myDiagram.toolManager.clickCreatingTool.archetypeNodeData = {
-      name: "Question:",
+      name: "Enter question here.",
       leftArray: [ {"portColor":"black", "portId":"left0", 'name':'connect'} ],
-      rightArray: [ {"portColor":"lightblue", "portId":"right0", 'name':'Next'} ],
+      rightArray: [ {"portColor":"lightblue", "portId":"right0", 'name':'NEXT'} ],
       topArray: [],
       bottomArray: [],
     };
 
-    myDiagram.contextMenu =
+    /*myDiagram.contextMenu =
     GO(go.Adornment, "Vertical",
     makeButton("Paste",
     function(e, obj) { e.diagram.commandHandler.pasteSelection(e.diagram.lastInput.documentPoint); },
@@ -240,7 +206,7 @@ $(function(){
     makeButton("Redo",
     function(e, obj) { e.diagram.commandHandler.redo(); },
     function(o) { return o.diagram.commandHandler.canRedo(); })
-  );
+  );*/
   // load the diagram from JSON data
   load();
 
@@ -271,7 +237,7 @@ $(function(){
           portId: name,
           //{#          portColor: go.Brush.randomColor()#}
           portColor: 'lightblue',
-          name:'Next'
+          name:'NEXT'
 
           // if you add port data properties here, you should copy them in copyPortData above
         };
@@ -323,29 +289,6 @@ $(function(){
     });
   }
 
-
-  function removePort(port) {
-    myDiagram.startTransaction("removePort");
-    var pid = port.portId;
-    var arr = port.panel.itemArray;
-    for (var i = 0; i < arr.length; i++) {
-      if (arr[i].portId === pid) {
-        myDiagram.model.removeArrayItem(arr, i);
-        break;
-      }
-    }
-    myDiagram.commitTransaction("removePort");
-  }
-
-  // Remove all ports from the same side of the node as the clicked port.
-  function removeAll(port) {
-    myDiagram.startTransaction("removePorts");
-    var nodedata = port.part.data;
-    var side = port._side;  // there are four property names, all ending in "Array"
-    myDiagram.model.setDataProperty(nodedata, side + "Array", []);  // an empty Array
-    myDiagram.commitTransaction("removePorts");
-  }
-
   // Change the color of the clicked port.
   function changeColor(port) {
     myDiagram.startTransaction("colorPort");
@@ -374,12 +317,10 @@ $(function(){
 
   var editTitleField = false;
 
-  $('.js-editTitleIcon').on('click', function(e){
+  $('.js-editTitleText').on('click', function(e){
     $(this).hide();
-    $(this).siblings('.js-editTitleText').hide();
     $(this).siblings('.js-editTitleField').show();
-    $(this).siblings('.js-editTitleField').prop('readonly', false);
-    var titleText = $(this).siblings('.js-editTitleText').html();
+    var titleText = $(this).html();
     $(this).siblings('.js-editTitleField').val(titleText);
     $(this).siblings('.js-editTitleField').focus();
     editTitleField = true;
@@ -387,10 +328,9 @@ $(function(){
 
   $('.js-editTitleField').focusout(function(e){
     if (editTitleField == true) {
-      var editedText = $('.js-editTitleField').val();
+      var editedText = ($('.js-editTitleField').val().length == 0) ? "Enter question here." : $('.js-editTitleField').val();
       $('.js-editTitleField').val("");
       $(this).hide();
-      $(this).siblings('.js-editTitleIcon').show();
       $(this).siblings('.js-editTitleText').show();
       $(this).siblings('.js-editTitleText').html(editedText);
       editTitleField = false;
@@ -458,6 +398,7 @@ $(function(){
   $('.js-buttonWrapper').on("focusout", function(e){
     if (editButtonField == true) {
       var editedText = $(e.target).val();
+      editedText = editedText.toUpperCase()
       $(e.target).val("");
       $(e.target).hide();
       $(e.target).siblings('.js-editButtonIcon').show();
@@ -467,6 +408,7 @@ $(function(){
       var i = $('.js-editButtonField').index($(e.target));
       if (currentNodeData !== null) myDiagram.model.setDataProperty(currentNodeData.rightArray[i], "name", editedText); //currentNodeData.rightArray[i].name = editedText;
     }
+    layout();
   });
 
   $('.js-buttonWrapper').on("keydown", ".js-editButtonField",function (e){
@@ -475,6 +417,10 @@ $(function(){
     }
   });
 
+  function addRightPort() {
+
+  }
+
   $('.js-layoutButton').click(function(e) {
     layout();
   });
@@ -482,5 +428,62 @@ $(function(){
   $('.js-loadButton').click(function(e) {
     load();
   });
+
+  $('.js-addAnswerButton').click(function(e) {
+    addPort("right");
+    layout();
+    if (currentNodeData !== null) var currentRightArray =  currentNodeData.rightArray;
+    editButtons(currentRightArray);
+  });
+
+  $('.js-removeAnswerButton').click(function(e) {
+    myDiagram.startTransaction("removePort");
+    myDiagram.selection.each(function(node) {
+      if (!(node instanceof go.Node)) return;
+      var arr = node.data["rightArray"];
+      if (arr && (arr.length > 1)) {
+        myDiagram.model.removeArrayItem(arr, arr.length-1);
+      }
+    });
+    myDiagram.commitTransaction("removePort");
+    layout();
+    if (currentNodeData !== null) var currentRightArray =  currentNodeData.rightArray;
+    editButtons(currentRightArray);
+  });
+
+  $('.js-addQuestionButton').click(function(e) {
+    var currP = myDiagram.position;
+    var p = new go.Point(150+currP.x,50+currP.y);
+    myDiagram.toolManager.clickCreatingTool.insertPart(p);
+  });
+
+  $('.js-removeQuestionButton').click(function(e) {
+    myDiagram.startTransaction("removeQuestion");
+    var removeNodeArr = []
+    myDiagram.selection.each(function(node) {
+      if (!(node instanceof go.Node)) return;
+        removeNodeArr.push(node);
+    });
+    for (i = 0; i < removeNodeArr.length; i++) {
+      myDiagram.remove(removeNodeArr[i]);
+    }
+    myDiagram.commitTransaction("removeQuestion");
+    layout();
+  });
+
+  $('.js-saveButton').click(function(e) {
+    save();
+  });
+
+  function editButtons(rightArray) {
+    var buttonStr = "";
+    $(".js-buttonWrapper").empty();
+    for (i = 0; i < rightArray.length; i++) {
+      var currentButtonText = rightArray[i].name;
+      buttonStr += '<div class="js-editButtonWrapper"><input type="text" class="btn-large js-editButtonField" id="css-buttonField" placeholder="Next" pattern=".{0,15}" />';
+      buttonStr += '<button class="btn-large waves-effect waves-white js-editButtonIcon">' + currentButtonText + '</button></div>';
+    }
+    $(".js-buttonWrapper").html(buttonStr);
+  }
 
 });

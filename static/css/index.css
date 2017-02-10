@@ -15,21 +15,18 @@ body {
   height: 100%;
   min-height: 100%;
   margin: 0;
-  background: #f3f3f1; }
+  background: #f4f4f1; }
 
 #myDiagramDiv {
   width: 100%;
   height: 450px; }
 
 #myDiagramDivButtons {
-  height: 40px;
   border-width: 0px 0px 1px 0px;
   border-style: solid;
   border-color: #1e1e1e;
   vertical-align: middle;
-  padding-left: 10px; }
-  #myDiagramDivButtons button {
-    margin-right: 10px; }
+  padding-bottom: 10px; }
 
 #preview {
   width: 100%;
@@ -37,7 +34,7 @@ body {
   #preview .js-previewNoCard {
     margin-top: 100px;
     font-style: italic;
-    color: #8c8179;
+    color: #bac5c6;
     font-size: 3rem;
     text-align: center; }
   #preview .js-previewContainer {
@@ -46,7 +43,8 @@ body {
     color: #1e1e1e;
     display: inline;
     font-size: 1.5rem;
-    border: none; }
+    border: none;
+    cursor: pointer; }
   #preview .js-editTitleField {
     color: #D16103;
     display: inline;
@@ -58,13 +56,12 @@ body {
   #preview .js-editAnswerType {
     display: inline-block;
     width: 90%; }
-  #preview .js-editTitleIcon, #preview .js-editIconIcon {
-    color: #9E9E9E; }
   #preview .js-editIconIcon {
+    color: #9E9E9E;
     display: inline-block;
     position: absolute;
     width: 0rem; }
-  #preview .js-editTitleIcon:hover, #preview .js-editIconIcon:hover {
+  #preview .js-editIconIcon:hover {
     color: #D16103;
     cursor: pointer; }
 
@@ -112,5 +109,22 @@ body {
   cursor: text;
   padding: 0 2rem;
   border-radius: 2px; }
+
+.diagramEditButton, .diagramEditButton:focus {
+  background-color: #f4f4f1;
+  color: #1e1e1e;
+  text-align: center;
+  vertical-align: middle;
+  text-transform: uppercase;
+  border-radius: 5px;
+  border: 1px solid #1e1e1e;
+  -webkit-box-shadow: none;
+  -moz-box-shadow: none;
+  box-shadow: none;
+  margin-left: 10px;
+  min-width: 75px; }
+
+.diagramEditButton:hover {
+  background-color: #bac5c6; }
 
 /*# sourceMappingURL=index.css.map */

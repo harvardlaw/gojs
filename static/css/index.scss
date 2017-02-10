@@ -3,7 +3,7 @@ $ink: #1e1e1e;
 $slate: #8996a0;
 $mortar: #8c8179;
 $shade: #bac5c6;
-$parchment: #f3f3f1;
+$parchment: #f4f4f1;
 $crimson: #a51c30;
 $saffron: #D16103;
 // Grey color palette https://www.google.com/design/spec/style/color.html
@@ -34,15 +34,11 @@ body {
 }
 
 #myDiagramDivButtons {
-  height: 40px;
   border-width:0px 0px 1px 0px;
   border-style: solid;
   border-color: $ink;
   vertical-align: middle;
-  padding-left: 10px;
-  button {
-    margin-right: 10px;
-  }
+  padding-bottom: 10px;
 }
 
 #preview {
@@ -53,7 +49,7 @@ body {
   .js-previewNoCard {
     margin-top: 100px;
     font-style: italic;
-    color: $mortar;
+    color: $shade;
     font-size: 3rem;
     text-align: center;
   }
@@ -67,6 +63,7 @@ body {
     display: inline;
     font-size: 1.5rem;
     border:none;
+    cursor: pointer;
   }
 
   .js-editTitleField {
@@ -86,17 +83,14 @@ body {
     width: 90%;
   }
 
-  .js-editTitleIcon, .js-editIconIcon {
-    color: $grey500;
-  }
-
   .js-editIconIcon {
+    color: $grey500;
     display: inline-block;
     position:absolute;
     width: 0rem;
   }
 
-  .js-editTitleIcon:hover, .js-editIconIcon:hover {
+  .js-editIconIcon:hover {
     color: $saffron;
     cursor: pointer;
   }
@@ -151,4 +145,23 @@ body {
   cursor: text;
   padding: 0 2rem;
   border-radius: 2px;
+}
+
+.diagramEditButton, .diagramEditButton:focus {
+  background-color: $parchment;
+  color: $ink;
+  text-align: center;
+  vertical-align: middle;
+  text-transform: uppercase;
+  border-radius: 5px;
+  border: 1px solid $ink;
+  -webkit-box-shadow: none;
+	-moz-box-shadow: none;
+	box-shadow: none;
+  margin-left: 10px;
+  min-width: 75px;
+}
+
+.diagramEditButton:hover {
+  background-color: $shade;
 }
