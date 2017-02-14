@@ -1,5 +1,8 @@
 $(function(){
 
+  $('.js-addQuestionButton').attr("disabled", true);
+  $('.js-removeQuestionButton').attr("disabled", true);
+
   var GO = go.GraphObject.make;  //for conciseness in defining node templates
   var currentKeyID = null;
   var currentNodeData = null;
@@ -34,8 +37,9 @@ $(function(){
     myDiagram.addDiagramListener('ObjectSingleClicked', function(e) {
       $('.js-previewNoCard').css("display", "none");
       var myElement = document.querySelector(".js-previewContainer");
-      myElement.style.display = "block";
+      myElement.style.display = "inline-block";
       var part = e.subject.part;
+      if (!(part instanceof go.Node)) return;
       $(".js-editTitleText").text(part.data.name);
       editButtons(part.data.rightArray);
       var iconText = (part.data.card_icon == null) ? "face" : part.data.card_icon;
@@ -46,6 +50,8 @@ $(function(){
       currentNodeData = myDiagram.model.findNodeDataForKey(currentKeyID);
       if (part.data.rightArray.length <= 1) $('.js-removeAnswerButton').attr("disabled", true);
       else $('.js-removeAnswerButton').attr("disabled", false);
+      $('.js-addQuestionButton').attr("disabled", false);
+      $('.js-removeQuestionButton').attr("disabled", false);
     });
 
     myDiagram.addDiagramListener('InitialLayoutCompleted', function(e) {
@@ -117,7 +123,7 @@ $(function(){
       textAlign: "center",
       font: "18px  Segoe UI,sans-serif",
       stroke: "white",
-      editable: true
+      editable: false
   },
     new go.Binding("text", "name").makeTwoWay())
   ),  // end Auto Panel body
@@ -178,7 +184,7 @@ $(function(){
             textAlign: "center",
             font: "18px  Segoe UI,sans-serif",
             stroke: "white",
-            editable: true },
+            editable: false },
 
             new go.Binding("text", "name").makeTwoWay())
           )  // end itemTemplate
@@ -449,6 +455,8 @@ $(function(){
     layout();
     if (currentNodeData !== null) var currentRightArray =  currentNodeData.rightArray;
     editButtons(currentRightArray);
+    if (currentRightArray.length <= 1) $('.js-removeAnswerButton').attr("disabled", true);
+    else $('.js-removeAnswerButton').attr("disabled", false);
   });
 
   $('.js-addQuestionButton').click(function(e) {

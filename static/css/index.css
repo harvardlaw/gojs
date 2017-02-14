@@ -17,6 +17,9 @@ body {
   margin: 0;
   background: #f4f4f1; }
 
+#sample {
+  height: 100%; }
+
 #myDiagramDiv {
   width: 100%;
   height: 450px; }
@@ -26,11 +29,24 @@ body {
   border-style: solid;
   border-color: #1e1e1e;
   vertical-align: middle;
-  padding-bottom: 10px; }
+  padding-bottom: 10px;
+  height: 38px; }
+
+#previewVariables {
+  width: 20%;
+  height: calc(100% - 488px);
+  display: inline-block;
+  float: right;
+  overflow: scroll;
+  background-color: black;
+  color: white;
+  padding: 5px; }
 
 #preview {
-  width: 100%;
-  text-align: center; }
+  width: 80%;
+  display: inline-block;
+  text-align: center;
+  vertical-align: top; }
   #preview .js-previewNoCard {
     margin-top: 100px;
     font-style: italic;
@@ -38,7 +54,9 @@ body {
     font-size: 3rem;
     text-align: center; }
   #preview .js-previewContainer {
-    display: none; }
+    display: none;
+    margin-left: auto;
+    margin-right: auto; }
   #preview .js-editTitleText {
     color: #1e1e1e;
     display: inline;
@@ -116,7 +134,6 @@ body {
   text-align: center;
   vertical-align: middle;
   text-transform: uppercase;
-  border-radius: 5px;
   border: 1px solid #1e1e1e;
   -webkit-box-shadow: none;
   -moz-box-shadow: none;
@@ -126,5 +143,12 @@ body {
 
 .diagramEditButton:hover {
   background-color: #bac5c6; }
+
+.diagramEditButton:disabled {
+  color: #bac5c6;
+  border: 1px solid #bac5c6; }
+
+.diagramEditButton:disabled:hover {
+  background-color: #f4f4f1; }
 
 /*# sourceMappingURL=index.css.map */
