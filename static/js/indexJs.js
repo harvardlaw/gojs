@@ -97,87 +97,90 @@ $(function(){
   // the node template
   // includes a panel on each side with an itemArray of panels containing ports
   myDiagram.nodeTemplate =
-  GO(go.Node, "Table",
+
+  GO(go.Node, "Auto",
     { locationObjectName: "BODY",
     locationSpot: go.Spot.Center,
-    selectionObjectName: "BODY"//,
-    //contextMenu: nodeMenu
+    selectionObjectName: "BODY"
     },
-  new go.Binding("location", "loc", go.Point.parse).makeTwoWay(go.Point.stringify),
+    GO(go.Shape, { fill: "white", stroke: "black", strokeWidth: 2 }),
+    GO(go.Panel, "Table", {
+      //,
+      //contextMenu: nodeMenu
+    },
 
-  // the body
-  GO(go.Panel, "Auto",
-  { row: 1,
-    column: 1,
-    name: "BODY",
-    stretch: go.GraphObject.Fill
-  },
-  GO(go.Shape, "Rectangle",
-  { fill: "#AC193D",
-  stroke: null,
-  strokeWidth: 0,
-  minSize: new go.Size(56, 56)
-  }),
-  GO(go.TextBlock,
-    { margin: 10,
-      textAlign: "center",
-      font: "18px  Segoe UI,sans-serif",
-      stroke: "white",
-      editable: false
-  },
-    new go.Binding("text", "name").makeTwoWay())
-  ),  // end Auto Panel body
+    new go.Binding("location", "loc", go.Point.parse).makeTwoWay(go.Point.stringify),
+
+    // the body
+    GO(go.Panel, "Auto",
+    { row: 1,
+      column: 1,
+      name: "BODY",
+      stretch: go.GraphObject.Fill
+    },
+      GO(go.Shape, "Rectangle",
+      { fill: "#AC193D",
+        stroke: null,
+        strokeWidth: 0,
+        margin: new go.Margin(1,0,1,2),
+        minSize: new go.Size(56, 56)
+      }),
+      GO(go.TextBlock,
+      { margin: 10,
+        textAlign: "center",
+        font: "18px  Segoe UI,sans-serif",
+        stroke: "white",
+        editable: false
+      },
+      new go.Binding("text", "name").makeTwoWay())
+    ),  // end Auto Panel body
   // the Panel holding the left port elements, which are themselves Panels,
   // created for each item in the itemArray, bound to data.leftArray
 
-  GO(go.Panel, "Vertical",
-  new go.Binding("itemArray", "leftArray"),
-  { row: 1, column: 0,
-    itemTemplate:
-    GO(go.Panel,
-      { _side: "left",  // internal property to make it easier to tell which side it's on
-      fromSpot: go.Spot.Left,
-      toSpot: go.Spot.Left,
-      fromLinkable: true,
-      toLinkable: true,
+    GO(go.Panel, "Vertical",
+      new go.Binding("itemArray", "leftArray"),
+      { row: 1, column: 0,
+        itemTemplate:
+        GO(go.Panel,
+          { _side: "left",  // internal property to make it easier to tell which side it's on
+          fromSpot: go.Spot.Left,
+          toSpot: go.Spot.Left,
+          fromLinkable: true,
+          toLinkable: true,
+          cursor: "pointer"//,
+          //contextMenu: portMenu
+        },
+      new go.Binding("portId", "portId"),
+      GO(go.Shape, "Circle",
+        { stroke: 'red',
+        strokeWidth: 1,
+        desiredSize: smallsize,
+        margin: new go.Margin(1,0,1,2) },
+        new go.Binding("fill", "portColor"))
+      )}  // end itemTemplate
+    ),  // end Vertical Panel
 
-      cursor: "pointer"//,
-      //contextMenu: portMenu
-    },
-    new go.Binding("portId", "portId"),
-    GO(go.Shape, "Circle",
-    { stroke: 'red',
-    strokeWidth: 1,
-    desiredSize: smallsize,
-    margin: new go.Margin(1,0) },
-    new go.Binding("fill", "portColor"))
-
-  )  // end itemTemplate
-  }
-  ),  // end Vertical Panel
-
-  // the Panel holding the right port elements, which are themselves Panels,
-  // created for each item in the itemArray, bound to data.rightArray
-  GO(go.Panel, "Vertical",
-  new go.Binding("itemArray", "rightArray"),
-  { row: 1, column: 2,
-    itemTemplate:
-    GO(go.Panel,
-      { _side: "right",
-      fromSpot: go.Spot.Right,
-      toSpot: go.Spot.Right,
-      fromLinkable: true,
-      toLinkable: true,
-
-      cursor: "pointer"//,
-      //contextMenu: portMenu
-    },
+    // the Panel holding the right port elements, which are themselves Panels,
+    // created for each item in the itemArray, bound to data.rightArray
+    GO(go.Panel, "Vertical",
+    new go.Binding("itemArray", "rightArray"),
+    { row: 1, column: 2,
+      itemTemplate:
+      GO(go.Panel,
+        { _side: "right",
+        fromSpot: go.Spot.Right,
+        toSpot: go.Spot.Right,
+        fromLinkable: true,
+        toLinkable: true,
+        cursor: "pointer"//,
+        //contextMenu: portMenu
+      },
       new go.Binding("portId", "portId"),
       GO(go.Shape, "Rectangle",
       { stroke: null,
         strokeWidth: 0,
         desiredSize: portSize,
-        margin: new go.Margin(1, 0) },
+        margin: new go.Margin(1,2,1,0) },
         new go.Binding("fill", "portColor")),
         GO(go.TextBlock,
           { margin: 10,
@@ -187,11 +190,9 @@ $(function(){
             editable: false },
 
             new go.Binding("text", "name").makeTwoWay())
-          )  // end itemTemplate
-        }
-      )  // end Vertical Panel
-
-    );  // end Node
+    )}  // end itemTemplate
+  )  // end Vertical Panel
+));  // end Node
 
     myDiagram.toolManager.clickCreatingTool.archetypeNodeData = {
       name: "Enter question here.",
@@ -303,10 +304,37 @@ $(function(){
     myDiagram.commitTransaction("colorPort");
   }
 
+  var textFile = null;
+
+  function makeTextFile (text) {
+    var data = new Blob([text], {type: 'application/json'});
+    if (textFile !== null) {
+      window.URL.revokeObjectURL(textFile);
+    }
+    textFile = window.URL.createObjectURL(data);
+    // returns a URL you can use as a href
+    return textFile;
+  };
+
   // Save the model to / load it from JSON text shown on the page itself, not in a database.
   function save() {
     document.getElementById("mySavedModel").value = myDiagram.model.toJson();
     myDiagram.isModified = false;
+    var create = document.getElementById('create'),
+    textbox = document.getElementById('textbox');
+
+    var link = document.createElement('a');
+    link.setAttribute('download', 'Template.json');
+    link.href = makeTextFile($("#mySavedModel").val());
+    document.body.appendChild(link);
+
+    // wait for the link to be added to the document
+    window.requestAnimationFrame(function () {
+      var event = new MouseEvent('click');
+      link.dispatchEvent(event);
+      document.body.removeChild(link);
+    });
+
   }
 
   function load() {
