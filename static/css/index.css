@@ -139,7 +139,7 @@ body {
   -moz-box-shadow: none;
   box-shadow: none;
   margin-left: 10px;
-  min-width: 75px; }
+  min-width: 100px; }
 
 .diagramEditButton:hover {
   background-color: #bac5c6; }
@@ -150,5 +150,25 @@ body {
 
 .diagramEditButton:disabled:hover {
   background-color: #f4f4f1; }
+
+.ddButtonWrapper {
+  display: inline-block;
+  position: relative; }
+
+.ddButton {
+  position: absolute;
+  display: none;
+  cursor: pointer;
+  margin: 0px; }
+  .ddButton li {
+    padding: 2px 6px 2px 6px;
+    border-bottom: 0px; }
+  .ddButton li:last-child {
+    border-bottom: 1px solid #1e1e1e; }
+
+.ddButton.show {
+  display: block;
+  z-index: 1;
+  top: 25px; }
 
 /*# sourceMappingURL=index.css.map */

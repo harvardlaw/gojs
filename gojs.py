@@ -1,28 +1,33 @@
 from flask import Flask, render_template, request
-import ast
+import ast, json
 app = Flask(__name__)
 
+currModel = {}
+tempNo = 0
+
+with open('templates/datum.html') as data_file:
+    currModel = json.load(data_file)
 
 @app.route('/')
 def hello_world():
-    # with open('/static/tmp/test.txt', 'r') as myfile:
-    #     stable = myfile.read()
+    return render_template('index.html',currModel=json.dumps(currModel))
 
-    # return render_template('index.html', passin=stable)
-    return render_template('index.html')
-
-
-@app.route('/postdata/', methods = ['GET', 'POST'])
+@app.route('/savecurrmodel', methods = ['GET','POST'])
 def postdata():
-    print "post"
-    x = request.form['posted_data']
-    # card_dictionary = ast.literal_eval(request.form['posted_data'])
-    # print card_dictionary['loc']
-    # print card_dictionary
-    # print x
-    # print render_template('test_card.html')
-    return render_template('test_card.html')
+    currModel = json.loads(request.args.get("payload"))
+    global tempNo
+    with open('JSONtemp/temp'+str(tempNo)+'.txt', 'w') as write_file:
+        json.dump(currModel, write_file, indent=4, sort_keys=True)
+    tempNo += 1
+    return "OK"
 
+@app.errorhandler(500)
+def handle_bad_request(e):
+    print e
+
+@app.errorhandler(400)
+def handle_bad_request(e):
+    print e
 
 if __name__ == '__main__':
     app.run()

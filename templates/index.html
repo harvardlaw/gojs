@@ -25,14 +25,27 @@
     <button class="diagramEditButton js-removeQuestionButton">Remove Question</button>
     <button class="diagramEditButton js-addAnswerButton">Add Answer</button>
     <button class="diagramEditButton js-removeAnswerButton">Remove Answer</button>
-    <button class="diagramEditButton js-saveButton">Save</button>
-    <button class="diagramEditButton js-loadButton">Load</button>
+    <div class="ddButtonWrapper">
+      <button class="diagramEditButton js-saveButton">Save &#x25BE;</button>
+      <ul class="ddButton">
+        <li class="diagramEditButton js-saveLocalButton">Download</li>
+        <li class="diagramEditButton js-saveRemoteButton">Save to Server</li>
+      </ul>
+    </div>
+    <div class="ddButtonWrapper">
+      <button class="diagramEditButton js-loadButton">Load Template &#x25BE;</button>
+      <ul class="ddButton">
+        <li class="diagramEditButton">Contact Info</li>
+        <li class="diagramEditButton">Demographics</li>
+        <li class="diagramEditButton">End of Intake</li>
+      </ul>
+    </div>
     <button class="diagramEditButton js-layoutButton">Fix Layout</button>
   </div>
   <div id="preview">
     <div class="js-previewNoCard"> Click on a card above to edit it here.</div>
     <div class="container js-previewContainer">
-      {% include 'error_card.html' %}
+      {% include 'card.html' %}
     </div>
   </div>
   <div id="previewVariables">
@@ -41,7 +54,7 @@
   <br>
 
   <textarea id="mySavedModel">
-    {% include 'datum.html' %}
+    {{currModel}}
   </textarea>
 
   </div>
