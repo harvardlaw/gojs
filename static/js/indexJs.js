@@ -1,9 +1,13 @@
 $(function(){
 
   //disable buttons because nodes are not yet visible
-  $('.js-addQuestionButton').attr("disabled", true);
+  $('.js-addAnswerButton').attr("disabled", true);
+  $('.js-removeAnswerButton').attr("disabled", true);
   $('.js-removeQuestionButton').attr("disabled", true);
   $('.js-saveButton').attr("disabled", true);
+
+  //build list of possible select options
+  var selectOptions = ["textfield", "fileupload", "none"];
 
 //*************************
 //INITIALIZE GRAPH
@@ -54,8 +58,9 @@ $(function(){
     editButtons(part.data.rightArray);
     var iconText = (part.data.card_icon == null) ? "face" : part.data.card_icon;
     $("#selectedIcon").text(iconText);
-    var placeholderText = "Text Field";
-    $(".js-editAnswerType").attr("placeholder", placeholderText);
+    var answerType = part.data.answerType;
+    if ($.inArray(answerType, selectOptions) == -1) answerType = "none";
+    $(".js-editAnswerType").val(answerType).prop('selected', true);
     currentKeyID = part.data.key;
     currentNodeData = myDiagram.model.findNodeDataForKey(currentKeyID);
     //update add/remove buttons based on current node
@@ -73,6 +78,7 @@ $(function(){
   myDiagram.addDiagramListener("Modified", function(e) {
     if (myDiagram.isModified) {
       $('.js-saveButton').attr("disabled", false);
+      myDiagram.isModified = false;
     }
     else {
       $('.js-saveButton').attr("disabled", true);
@@ -181,7 +187,7 @@ $(function(){
 
     //new node has this default data
     myDiagram.toolManager.clickCreatingTool.archetypeNodeData = {
-      name: "Enter question here.",
+      name: "Question",
       leftArray: [ {"portColor":"black", "portId":"left0", 'name':'connect'} ],
       rightArray: [ {"portColor":"lightblue", "portId":"right0", 'name':'NEXT'} ],
       topArray: [],
@@ -286,6 +292,7 @@ $(function(){
 
   $('.js-editTitleField').focusout(function(e){
     if (editTitleField == true) {
+      myDiagram.startTransaction("editTitleField");
       var editedText = ($('.js-editTitleField').val().length == 0) ? "Enter question here." : $('.js-editTitleField').val();
       $('.js-editTitleField').val("");
       $(this).hide();
@@ -293,6 +300,8 @@ $(function(){
       $(this).siblings('.js-editTitleText').html(editedText);
       editTitleField = false;
       if (currentNodeData !== null) myDiagram.model.setDataProperty(currentNodeData, "name", editedText);
+      myDiagram.isModified = true;
+      myDiagram.commitTransaction("editTitleField");
     }
   });
 
@@ -327,6 +336,7 @@ $(function(){
       editIconField = true;
     }
     else {
+      myDiagram.startTransaction("editIconOptions");
       $('.iconOption').each(function(i) {
         $(this).css("opacity", 0);
         var translatestr = "translate(0px,0px)";
@@ -340,6 +350,8 @@ $(function(){
       $('#selectedIcon').text(selectedIcon);
       e.target.innerText = currentIcon;
       if (currentNodeData !== null) myDiagram.model.setDataProperty(currentNodeData, "card_icon", selectedIcon);
+      myDiagram.isModified = true;
+      myDiagram.commitTransaction("editIconOptions");
     }
   });
 
@@ -357,6 +369,7 @@ $(function(){
 
   $('.js-buttonWrapper').on("focusout", function(e){
     if (editButtonField == true) {
+      myDiagram.startTransaction("editButtonWrapper");
       var editedText = $(e.target).val();
       editedText = editedText.toUpperCase()
       $(e.target).val("");
@@ -367,6 +380,8 @@ $(function(){
       editButtonField = false;
       var i = $('.js-editButtonField').index($(e.target));
       if (currentNodeData !== null) myDiagram.model.setDataProperty(currentNodeData.rightArray[i], "name", editedText); //currentNodeData.rightArray[i].name = editedText;
+      myDiagram.isModified = true;
+      myDiagram.commitTransaction("editButtonWrapper");
     }
     layout();
   });
@@ -385,6 +400,9 @@ $(function(){
   //load premade template
   $('.js-loadButton').click(function(e) {
     $(".js-loadButton~.ddButton").toggleClass("show");
+    myDiagram.startTransaction("loadTemplate");
+    myDiagram.isModified = true;
+    myDiagram.commitTransaction("loadTemplate");
   });
 
   //add rightport to current node
@@ -417,7 +435,7 @@ $(function(){
   $('.js-addQuestionButton').click(function(e) {
     var currP = myDiagram.position;
     var p = new go.Point(150+currP.x,50+currP.y);
-    myDiagram.toolManager.clickCreatingTool.insertPart(p);
+    var newPart = myDiagram.toolManager.clickCreatingTool.insertPart(p);
   });
 
   //remove another node from graph
@@ -467,6 +485,8 @@ $(function(){
 
   //save current graph to server
   $('.js-saveRemoteButton').click(function (e) {
+    myDiagram.startTransaction("save");
+
     $.ajax({
        url: '/savecurrmodel',
        type: 'GET',
@@ -478,6 +498,7 @@ $(function(){
     });
     myDiagram.isModified = false;
     $(".js-saveButton~.ddButton").toggleClass("show");
+    myDiagram.commitTransaction("save");
   });
 
   //update buttons shown on the preview card
@@ -491,5 +512,13 @@ $(function(){
     }
     $(".js-buttonWrapper").html(buttonStr);
   }
+
+  //if answertype select box changes
+  $(".js-editAnswerType").change(function (e) {
+    myDiagram.startTransaction("editAnswerType");
+    if (currentNodeData !== null) myDiagram.model.setDataProperty(currentNodeData, "answerType", $(".js-editAnswerType option").filter(":selected").val());
+    myDiagram.isModified = true;
+    myDiagram.commitTransaction("editAnswerType");
+  });
 
 });

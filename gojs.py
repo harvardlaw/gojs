@@ -5,7 +5,7 @@ app = Flask(__name__)
 currModel = {}
 tempNo = 0
 
-with open('templates/datum.html') as data_file:
+with open('templates/datum.json') as data_file:
     currModel = json.load(data_file)
 
 @app.route('/')

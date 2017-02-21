@@ -1,0 +1,20 @@
+{ "class": "go.GraphLinksModel",
+  "copiesArrays": true,
+  "copiesArrayObjects": true,
+  "linkFromPortIdProperty": "fromPort",
+  "linkToPortIdProperty": "toPort",
+  "nodeDataArray": [
+{"loc":"4375.65283203125 145", "name":"END", "leftArray":[ {"portId":"left0", "name":"connect", "portColor":"black"} ], "topArray":[], "bottomArray":[], "key":-17, "rightArray":[]},
+{"name":"What is your name?", "leftArray":[ {"portColor":"black", "portId":"left0", "name":"connect"} ], "rightArray":[ {"portColor":"lightblue", "portId":"right0", "name":"NEXT"} ], "topArray":[], "bottomArray":[], "key":-2, "answerType":"textfield"},
+{"name":"What is your address?", "leftArray":[ {"portColor":"black", "portId":"left0", "name":"connect"} ], "rightArray":[ {"portColor":"lightblue", "portId":"right0", "name":"NEXT"} ], "topArray":[], "bottomArray":[], "key":-3, "answerType":"textfield"},
+{"name":"What is your phone number?", "leftArray":[ {"portColor":"black", "portId":"left0", "name":"connect"} ], "rightArray":[ {"portColor":"lightblue", "portId":"right0", "name":"NEXT"} ], "topArray":[], "bottomArray":[], "key":-4, "answerType":"textfield"},
+{"name":"Do you know what type of legal help you need?", "leftArray":[ {"portColor":"black", "portId":"left0", "name":"connect"} ], "rightArray":[ {"portColor":"lightblue", "portId":"right0", "name":"YES"},{"portId":"right1", "portColor":"lightblue", "name":"NO"} ], "topArray":[], "bottomArray":[], "key":-5},
+{"name":"What is your e-mail address?", "leftArray":[ {"portColor":"black", "portId":"left0", "name":"connect"} ], "rightArray":[ {"portColor":"lightblue", "portId":"right0", "name":"NEXT"} ], "topArray":[], "bottomArray":[], "key":-6, "answerType":"textfield"}
+ ],
+  "linkDataArray": [
+{"from":-2, "to":-3, "fromPort":"right0", "toPort":"left0"},
+{"from":-3, "to":-4, "fromPort":"right0", "toPort":"left0"},
+{"from":-4, "to":-6, "fromPort":"right0", "toPort":"left0"},
+{"from":-6, "to":-5, "fromPort":"right0", "toPort":"left0"},
+{"from":-5, "to":-17, "fromPort":"right0", "toPort":"left0"}
+ ]}
