@@ -1,0 +1,15 @@
+{ "class": "go.GraphLinksModel",
+  "copiesArrays": true,
+  "copiesArrayObjects": true,
+  "linkFromPortIdProperty": "fromPort",
+  "linkToPortIdProperty": "toPort",
+  "nodeDataArray": [
+{"loc":"4375.65283203125 145", "name":"END", "leftArray":[ {"portId":"left0", "name":"connect", "portColor":"black"} ], "topArray":[], "bottomArray":[], "key":27, "rightArray":[]},
+{"name":"How do you prefer to be contacted?", "leftArray":[ {"portId":"left0", "name":"connect", "portColor":"black"} ], "topArray":[], "bottomArray":[], "answerType":"none", "key":12, "rightArray":[ {"portId":"right0", "name":"E-MAIL", "portColor":"lightblue"},{"portId":"right1", "portColor":"lightblue", "name":"PHONE"} ]},
+{"name":"We may take up to a week to get in touch.", "leftArray":[ {"portId":"left0", "name":"connect", "portColor":"black"} ], "topArray":[], "bottomArray":[], "answerType":"none", "key":14, "rightArray":[ {"portId":"right0", "name":"OKAY", "portColor":"lightblue"} ]}
+ ],
+  "linkDataArray": [
+{"from":12, "to":14, "fromPort":"right0", "toPort":"left0"},
+{"from":12, "to":14, "fromPort":"right1", "toPort":"left0"},
+{"from":14, "to":27, "fromPort":"right0", "toPort":"left0"}
+ ]}

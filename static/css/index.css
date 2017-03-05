@@ -107,6 +107,7 @@ body {
 .js-editButtonIcon {
   margin-left: 5px;
   margin-right: 5px;
+  margin-bottom: 10px;
   min-width: 50px;
   overflow: scroll;
   display: inline-block;
@@ -119,7 +120,7 @@ body {
   max-width: 75px;
   margin-left: 5px;
   margin-right: 5px;
-  margin-bottom: 0px;
+  margin-bottom: 10px;
   display: none;
   text-transform: uppercase;
   height: 54px;
@@ -186,5 +187,16 @@ body {
   white-space: nowrap;
   width: 80%;
   display: inline-block; }
+
+.zoom {
+  position: absolute;
+  top: 5px;
+  left: 5px;
+  z-index: 999; }
+  .zoom .diagramEditButton {
+    display: block;
+    min-width: 30px;
+    margin-bottom: 2px;
+    margin-left: 0px; }
 
 /*# sourceMappingURL=index.css.map */

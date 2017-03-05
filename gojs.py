@@ -16,10 +16,25 @@ def hello_world():
 def postdata():
     currModel = json.loads(request.args.get("payload"))
     global tempNo
+    with open("tempNo.txt", "r") as tempNoFile:
+        tempNo = int(tempNoFile.readlines()[0])
     with open('JSONtemp/temp'+str(tempNo)+'.txt', 'w') as write_file:
         json.dump(currModel, write_file, indent=4, sort_keys=True)
     tempNo += 1
+    with open("tempNo.txt", "w") as tempNoFile:
+        tempNoFile.write(str(tempNo))
     return "OK"
+
+@app.route('/loadtemplate', methods = ['GET'])
+def loadtemplate():
+    print "******bp1"
+    loadFileName = request.args.get("payload")
+    print "******bp2 " + loadFileName
+    loadTemplate = {}
+    with open("templates/" + loadFileName) as loadFile:
+        loadTemplate = loadFile.readlines()
+        print "******bp3 " +  " ".join(loadTemplate)
+    return " ".join(loadTemplate), 200
 
 @app.errorhandler(500)
 def handle_bad_request(e):

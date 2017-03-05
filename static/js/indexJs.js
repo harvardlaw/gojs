@@ -64,6 +64,7 @@ $(function(){
     currentKeyID = part.data.key;
     currentNodeData = myDiagram.model.findNodeDataForKey(currentKeyID);
     //update add/remove buttons based on current node
+    $('.js-addAnswerButton').attr("disabled", false);
     if (part.data.rightArray.length <= 1) $('.js-removeAnswerButton').attr("disabled", true);
     else $('.js-removeAnswerButton').attr("disabled", false);
     $('.js-addQuestionButton').attr("disabled", false);
@@ -140,7 +141,7 @@ $(function(){
           { _side: "left",
           fromSpot: go.Spot.Left,
           toSpot: go.Spot.Left,
-          fromLinkable: true,
+          fromLinkable: false,
           toLinkable: true,
           cursor: "pointer"
         },
@@ -160,24 +161,36 @@ $(function(){
       itemTemplate:
       GO(go.Panel,
         { _side: "right",
+        alignment: go.Spot.Right,
+        alignmentFocus: go.Spot.Right,
         fromSpot: go.Spot.Right,
         toSpot: go.Spot.Right,
         fromLinkable: true,
-        toLinkable: true,
+        toLinkable: false,
+        fromMaxLinks: 1,
         cursor: "pointer"
       },
       new go.Binding("portId", "portId"),
       GO(go.Shape, "Rectangle",
-      { stroke: null,
+      { alignment: go.Spot.Right,
+        alignmentFocus: go.Spot.Right,
+        stroke: null,
         strokeWidth: 0,
         desiredSize: portSize,
+        //height: portSize.height,
+        stretch: go.GraphObject.Horizontal,
         margin: new go.Margin(1,2,1,0) },
         new go.Binding("fill", "portColor")),
         GO(go.TextBlock,
-          { margin: 10,
-            textAlign: "center",
+          { verticalAlignment: go.Spot.MiddleLeft,
+            margin: new go.Margin(1,0,0,5),
+            textAlign: "left",
+            overflow: go.TextBlock.OverflowEllipsis,
             font: "18px  Segoe UI,sans-serif",
             stroke: "white",
+            //desiredSize: portSize,
+            height: portSize.height,
+            width: portSize.width-5,
             editable: false },
 
             new go.Binding("text", "name").makeTwoWay())
@@ -187,7 +200,7 @@ $(function(){
 
     //new node has this default data
     myDiagram.toolManager.clickCreatingTool.archetypeNodeData = {
-      name: "Question",
+      name: "Enter question here.",
       leftArray: [ {"portColor":"black", "portId":"left0", 'name':'connect'} ],
       rightArray: [ {"portColor":"lightblue", "portId":"right0", 'name':'NEXT'} ],
       topArray: [],
@@ -400,10 +413,35 @@ $(function(){
   //load premade template
   $('.js-loadButton').click(function(e) {
     $(".js-loadButton~.ddButton").toggleClass("show");
+  });
+
+  $(".js-loadButton~.ddButton li").click(function(e) {
+    var fileNeeded = '';
+    if ($(this).hasClass("js-loadContactInfo")) fileNeeded = "ContactInfo.json";
+    else if ($(this).hasClass("js-loadDemographics")) fileNeeded = "Demographics.json";
+    else if ($(this).hasClass("js-loadEnd")) fileNeeded = "End.json";
     myDiagram.startTransaction("loadTemplate");
+    $.ajax({
+       url: '/loadtemplate',
+       type: 'GET',
+       dataType: 'json',
+       data: {
+         payload: fileNeeded,
+         data: 'json'
+       }
+    }).done(function(data) {
+      origJson = JSON.parse(myDiagram.model.toJson());
+      //dataJson = JSON.parse(data);
+      dataJson = data;
+      dataJson.nodeDataArray = dataJson.nodeDataArray.concat(origJson.nodeDataArray);
+      dataJson.linkDataArray = dataJson.linkDataArray.concat(origJson.linkDataArray);
+      myDiagram.model = go.Model.fromJson(dataJson);
+      document.getElementById("mySavedModel").value = JSON.stringify(dataJson);
+    });
     myDiagram.isModified = true;
     myDiagram.commitTransaction("loadTemplate");
-  });
+    $(".js-loadButton~.ddButton").toggleClass("show");
+  })
 
   //add rightport to current node
   $('.js-addAnswerButton').click(function(e) {
@@ -481,12 +519,12 @@ $(function(){
       link.dispatchEvent(event);
       document.body.removeChild(link);
 		});
+    $(".js-saveButton~.ddButton").toggleClass("show");
   });
 
   //save current graph to server
   $('.js-saveRemoteButton').click(function (e) {
     myDiagram.startTransaction("save");
-
     $.ajax({
        url: '/savecurrmodel',
        type: 'GET',

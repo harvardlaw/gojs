@@ -18,6 +18,10 @@
 </head>
 
 <body>
+<div class="zoom">
+  <button class="diagramEditButton" onclick="myDiagram.commandHandler.increaseZoom(1.5)">+</button>
+  <button class="diagramEditButton" onclick="myDiagram.commandHandler.decreaseZoom(0.7)">-</button>
+</div>
 <div id="sample">
   <div id="myDiagramDiv"></div>
   <div id="myDiagramDivButtons">
@@ -35,9 +39,9 @@
     <div class="ddButtonWrapper">
       <button class="diagramEditButton js-loadButton">Load Template &#x25BE;</button>
       <ul class="ddButton">
-        <li class="diagramEditButton">Contact Info</li>
-        <li class="diagramEditButton">Demographics</li>
-        <li class="diagramEditButton">End of Intake</li>
+        <li class="diagramEditButton js-loadContactInfo">Contact Info</li>
+        <li class="diagramEditButton js-loadDemographics">Demographics</li>
+        <li class="diagramEditButton js-loadEnd">End of Intake</li>
       </ul>
     </div>
     <button class="diagramEditButton js-layoutButton">Fix Layout</button>
