@@ -5,7 +5,7 @@ app = Flask(__name__)
 currModel = {}
 tempNo = 0
 
-with open('templates/datum.json') as data_file:
+with open('../templates/jstemplates/datum.json') as data_file:
     currModel = json.load(data_file)
 
 @app.route('/')
@@ -31,7 +31,7 @@ def loadtemplate():
     loadFileName = request.args.get("payload")
     print "******bp2 " + loadFileName
     loadTemplate = {}
-    with open("templates/" + loadFileName) as loadFile:
+    with open("../templates/jstemplates/" + loadFileName) as loadFile:
         loadTemplate = loadFile.readlines()
         print "******bp3 " +  " ".join(loadTemplate)
     return " ".join(loadTemplate), 200
