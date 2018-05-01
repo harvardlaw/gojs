@@ -1,0 +1,10 @@
+{ "class": "go.GraphLinksModel",
+  "copiesArrays": true,
+  "copiesArrayObjects": true,
+  "linkFromPortIdProperty": "fromPort",
+  "linkToPortIdProperty": "toPort",
+  "nodeDataArray": [
+{"loc":"4375.65283203125 145", "name":"END", "leftArray":[ {"portId":"left0", "name":"connect", "portColor":"black"} ], "topArray":[], "bottomArray":[], "key":-17, "rightArray":[]},
+{"name":"Please fill out the following questions.", "leftArray":[ {"portId":"left0", "name":"connect", "portColor":"black"} ], "topArray":[], "bottomArray":[], "answerType":"none", "key":-2, "rightArray":[ {"portId":"right0", "name":"NEXT", "portColor":"lightblue"} ]}
+ ],
+  "linkDataArray": [ {"from":-2, "to":-17, "fromPort":"right0", "toPort":"left0"} ]}

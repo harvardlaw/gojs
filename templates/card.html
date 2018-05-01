@@ -17,7 +17,11 @@
           <div class="iconOption"><i class="material-icons prefix js-editIconIcon">attach_file</i></div>
           <div class="iconOption"><i class="material-icons prefix js-editIconIcon">attach_money</i></div>
         </div>
-        <input class="js-editAnswerType" type="text" pattern=".{1,}" placeholder="Student's Name" />
+        <select class="js-editAnswerType">
+          <option value="textfield">Text Field</option>
+          <option value="fileupload">File Upload</option>
+          <option value="none">None</option>
+        </select>
       </div>
 
       <div class="row center js-buttonWrapper">

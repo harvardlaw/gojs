@@ -1,0 +1,20 @@
+{ "class": "go.GraphLinksModel",
+  "copiesArrays": true,
+  "copiesArrayObjects": true,
+  "linkFromPortIdProperty": "fromPort",
+  "linkToPortIdProperty": "toPort",
+  "nodeDataArray": [
+{"loc":"4375.65283203125 145", "name":"END", "leftArray":[ {"portId":"left0", "name":"connect", "portColor":"black"} ], "topArray":[], "bottomArray":[], "key":37, "rightArray":[]},
+{"name":"What is your name?", "leftArray":[ {"portId":"left0", "name":"connect", "portColor":"black"} ], "topArray":[], "bottomArray":[], "answerType":"textfield", "key":22, "rightArray":[ {"portId":"right0", "name":"NEXT", "portColor":"lightblue"} ]},
+{"name":"What is your address?", "leftArray":[ {"portId":"left0", "name":"connect", "portColor":"black"} ], "topArray":[], "bottomArray":[], "answerType":"textfield", "key":23, "rightArray":[ {"portId":"right0", "name":"NEXT", "portColor":"lightblue"} ]},
+{"name":"What is your phone number?", "leftArray":[ {"portId":"left0", "name":"connect", "portColor":"black"} ], "topArray":[], "bottomArray":[], "answerType":"textfield", "key":24, "rightArray":[ {"portId":"right0", "name":"NEXT", "portColor":"lightblue"} ]},
+{"name":"Do you know what type of legal help you need?", "leftArray":[ {"portId":"left0", "name":"connect", "portColor":"black"} ], "topArray":[], "bottomArray":[], "key":25, "rightArray":[ {"portId":"right0", "name":"YES", "portColor":"lightblue"},{"portId":"right1", "name":"NO", "portColor":"lightblue"} ]},
+{"name":"What is your e-mail address?", "leftArray":[ {"portId":"left0", "name":"connect", "portColor":"black"} ], "topArray":[], "bottomArray":[], "answerType":"textfield", "key":26, "rightArray":[ {"portId":"right0", "name":"NEXT", "portColor":"lightblue"} ]}
+ ],
+  "linkDataArray": [
+{"toPort":"left0", "to":23, "from":22, "fromPort":"right0"},
+{"toPort":"left0", "to":24, "from":23, "fromPort":"right0"},
+{"toPort":"left0", "to":26, "from":24, "fromPort":"right0"},
+{"toPort":"left0", "to":25, "from":26, "fromPort":"right0"},
+{"toPort":"left0", "to":37, "from":25, "fromPort":"right0"}
+ ]}

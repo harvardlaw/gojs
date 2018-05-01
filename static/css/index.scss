@@ -97,11 +97,6 @@ body {
     overflow: scroll;
   }
 
-  .js-editAnswerType {
-    display: inline-block;
-    width: 90%;
-  }
-
   .js-editIconIcon {
     color: $grey500;
     display: inline-block;
@@ -131,6 +126,7 @@ body {
   opacity: 0;
   transition: .5s all;
   display: inline-block;
+  z-index: 20;
 }
 
 #mySavedModel {
@@ -139,11 +135,13 @@ body {
 
 .js-editButtonWrapper {
   display: inline-block;
+  z-index: 0;
 }
 
 .js-editButtonIcon {
   margin-left: 5px;
   margin-right: 5px;
+  margin-bottom: 10px;
   min-width: 50px;
   overflow: scroll;
   display: inline-block;
@@ -157,7 +155,7 @@ body {
   max-width: 75px;
   margin-left: 5px;
   margin-right: 5px;
-  margin-bottom: 0px;
+  margin-bottom: 10px;
   display: none;
   text-transform: uppercase;
   height: 54px;
@@ -177,7 +175,7 @@ body {
 	-moz-box-shadow: none;
 	box-shadow: none;
   margin-left: 10px;
-  min-width: 75px;
+  min-width: 100px;
 }
 
 .diagramEditButton:hover {
@@ -191,4 +189,59 @@ body {
 
 .diagramEditButton:disabled:hover {
   background-color: $parchment;
+}
+
+.ddButtonWrapper {
+  display: inline-block;
+  position:relative;
+}
+
+.ddButton {
+  position:absolute;
+  display: none;
+  cursor: pointer;
+  margin: 0px;
+  li {
+    padding: 2px 6px 2px 6px;
+    border-bottom: 0px;
+  }
+  li:last-child {
+    border-bottom: 1px solid $ink;
+  }
+}
+.ddButton.show {
+  display:block;
+  z-index:1;
+  top:25px;
+}
+
+.js-editAnswerType {
+  -webkit-border-radius: 2px;
+  -webkit-box-shadow: 0px 1px 3px rgba(0, 0, 0, 0.1);
+  -webkit-padding-end: 20px;
+  -webkit-padding-start: 2px;
+  -webkit-user-select: none;
+  border: 1px solid #AAA;
+  color: #555;
+  font-size: inherit;
+  margin: 20px;
+  overflow: hidden;
+  padding: 5px 10px;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  width: 80%;
+  display: inline-block;
+}
+
+.zoom {
+  position: absolute;
+  top: 5px;
+  left: 5px;
+  z-index: 999;
+  .diagramEditButton {
+    display: block;
+    min-width: 30px;
+    margin-bottom: 2px;
+    margin-left: 0px;
+  }
 }

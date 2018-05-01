@@ -1,28 +1,48 @@
 from flask import Flask, render_template, request
-import ast
+import ast, json
 app = Flask(__name__)
 
+currModel = {}
+tempNo = 0
+
+with open('../templates/jstemplates/datum.json') as data_file:
+    currModel = json.load(data_file)
 
 @app.route('/')
 def hello_world():
-    # with open('/static/tmp/test.txt', 'r') as myfile:
-    #     stable = myfile.read()
+    return render_template('index.html',currModel=json.dumps(currModel))
 
-    # return render_template('index.html', passin=stable)
-    return render_template('index.html')
-
-
-@app.route('/postdata/', methods = ['GET', 'POST'])
+@app.route('/savecurrmodel', methods = ['GET','POST'])
 def postdata():
-    print "post"
-    x = request.form['posted_data']
-    # card_dictionary = ast.literal_eval(request.form['posted_data'])
-    # print card_dictionary['loc']
-    # print card_dictionary
-    # print x
-    # print render_template('test_card.html')
-    return render_template('test_card.html')
+    currModel = json.loads(request.args.get("payload"))
+    global tempNo
+    with open("tempNo.txt", "r") as tempNoFile:
+        tempNo = int(tempNoFile.readlines()[0])
+    with open('JSONtemp/temp'+str(tempNo)+'.txt', 'w') as write_file:
+        json.dump(currModel, write_file, indent=4, sort_keys=True)
+    tempNo += 1
+    with open("tempNo.txt", "w") as tempNoFile:
+        tempNoFile.write(str(tempNo))
+    return "OK"
 
+@app.route('/loadtemplate', methods = ['GET'])
+def loadtemplate():
+    print "******bp1"
+    loadFileName = request.args.get("payload")
+    print "******bp2 " + loadFileName
+    loadTemplate = {}
+    with open("../templates/jstemplates/" + loadFileName) as loadFile:
+        loadTemplate = loadFile.readlines()
+        print "******bp3 " +  " ".join(loadTemplate)
+    return " ".join(loadTemplate), 200
+
+@app.errorhandler(500)
+def handle_bad_request(e):
+    print e
+
+@app.errorhandler(400)
+def handle_bad_request(e):
+    print e
 
 if __name__ == '__main__':
     app.run()

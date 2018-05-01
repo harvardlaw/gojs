@@ -1,101 +1,102 @@
 $(function(){
 
-  $('.js-addQuestionButton').attr("disabled", true);
+  //disable buttons because nodes are not yet visible
+  $('.js-addAnswerButton').attr("disabled", true);
+  $('.js-removeAnswerButton').attr("disabled", true);
   $('.js-removeQuestionButton').attr("disabled", true);
+  $('.js-saveButton').attr("disabled", true);
 
-  var GO = go.GraphObject.make;  //for conciseness in defining node templates
+  //build list of possible select options
+  var selectOptions = ["textfield", "fileupload", "none"];
+
+//*************************
+//INITIALIZE GRAPH
+//*************************
+  //create GOJS window
+  var GO = go.GraphObject.make;
   var currentKeyID = null;
   var currentNodeData = null;
 
   myDiagram =
-  GO(go.Diagram, "myDiagramDiv",  //Diagram refers to its DIV HTML element by id
+  GO(go.Diagram, "myDiagramDiv",
   {   allowCopy: false,
     initialContentAlignment: go.Spot.Left,
     layout:
     GO(go.LayeredDigraphLayout,
       {
-        setsPortSpots: true,  // Links already know their fromSpot and toSpot
+        setsPortSpots: true,
         columnSpacing: 5,
         isInitial: false,
         isOngoing: false
       }),
       validCycle: go.Diagram.CycleNotDirected,
       "undoManager.isEnabled": true
-    });
-    go.Diagram.inherit(DragLinkingTool, go.DraggingTool);
-    myDiagram.toolManager.draggingTool = new DragLinkingTool();
-    myDiagram.addDiagramListener("LayoutCompleted", function(e) {
-      myDiagram.nodes.each(function(node) {
-        if (node.category === "Recycle") {
-          console.log('Node Recycled.');
-          return;
-        }
-        node.minLocation = new go.Point(node.location.x, -Infinity);
-      });
-    });
+  });
 
-    myDiagram.addDiagramListener('ObjectSingleClicked', function(e) {
-      $('.js-previewNoCard').css("display", "none");
-      var myElement = document.querySelector(".js-previewContainer");
-      myElement.style.display = "inline-block";
-      var part = e.subject.part;
-      if (!(part instanceof go.Node)) return;
-      $(".js-editTitleText").text(part.data.name);
-      editButtons(part.data.rightArray);
-      var iconText = (part.data.card_icon == null) ? "face" : part.data.card_icon;
-      $("#selectedIcon").text(iconText);
-      var placeholderText = (part.data.card_subtext == null) ? "Answer here" : part.data.card_subtext;
-      $(".js-editAnswerType").attr("placeholder", placeholderText);
-      currentKeyID = part.data.key;
-      currentNodeData = myDiagram.model.findNodeDataForKey(currentKeyID);
-      if (part.data.rightArray.length <= 1) $('.js-removeAnswerButton').attr("disabled", true);
-      else $('.js-removeAnswerButton').attr("disabled", false);
-      $('.js-addQuestionButton').attr("disabled", false);
-      $('.js-removeQuestionButton').attr("disabled", false);
-    });
+  go.Diagram.inherit(DragLinkingTool, go.DraggingTool);
+  myDiagram.toolManager.draggingTool = new DragLinkingTool();
 
-    myDiagram.addDiagramListener('InitialLayoutCompleted', function(e) {
-      layout();
-    });
-
-    // when the document is modified, add a "*" to the title and enable the "Save" button
-    myDiagram.addDiagramListener("Modified", function(e) {
-      var button = document.getElementById("SaveButton");
-      if (button) button.disabled = !myDiagram.isModified;
-      var idx = document.title.indexOf("*");
-      if (myDiagram.isModified) {
-        if (idx < 0) document.title += "*";
-      } else {
-        if (idx >= 0) document.title = document.title.substr(0, idx);
+  myDiagram.addDiagramListener("LayoutCompleted", function(e) {
+    myDiagram.nodes.each(function(node) {
+      if (node.category === "Recycle") {
+        console.log('Node Recycled.');
+        return;
       }
+      node.minLocation = new go.Point(node.location.x, -Infinity);
     });
-    // To simplify this code we define a function for creating a context menu button:
-    function makeButton(text, action, visiblePredicate) {
-      return GO("ContextMenuButton",
-      GO(go.TextBlock, text),
-      { click: action },
-      // don't bother with binding GraphObject.visible if there's no predicate
-      visiblePredicate ? new go.Binding("visible", "", visiblePredicate).ofObject() : {});
-    }
+  });
 
-    /*var nodeMenu =  // context menu for each Node
-    GO(go.Adornment, "Vertical",
-      makeButton("Delete",
-        function(e, obj) {
-          e.diagram.commandHandler.deleteSelection();
-          layout();
-      }),
-      makeButton("Add Answer",
-        function (e, obj) {
-          addRightPort();
-      })
-    );*/
+  myDiagram.addDiagramListener('ObjectSingleClicked', function(e) {
+    //no card shown in preview window
+    $('.js-previewNoCard').css("display", "none");
+    var myElement = document.querySelector(".js-previewContainer");
+    myElement.style.display = "inline-block";
+    var part = e.subject.part;
+    if (!(part instanceof go.Node)) return;
+    //if current object clicked is a node, update preview card
+    $(".js-editTitleText").text(part.data.name);
+    editButtons(part.data.rightArray);
+    var iconText = (part.data.card_icon == null) ? "face" : part.data.card_icon;
+    $("#selectedIcon").text(iconText);
+    var answerType = part.data.answerType;
+    if ($.inArray(answerType, selectOptions) == -1) answerType = "none";
+    $(".js-editAnswerType").val(answerType).prop('selected', true);
+    currentKeyID = part.data.key;
+    currentNodeData = myDiagram.model.findNodeDataForKey(currentKeyID);
+    //update add/remove buttons based on current node
+    $('.js-addAnswerButton').attr("disabled", false);
+    if (part.data.rightArray.length <= 1) $('.js-removeAnswerButton').attr("disabled", true);
+    else $('.js-removeAnswerButton').attr("disabled", false);
+    $('.js-addQuestionButton').attr("disabled", false);
+    $('.js-removeQuestionButton').attr("disabled", false);
+  });
+
+  myDiagram.addDiagramListener('InitialLayoutCompleted', function(e) {
+    layout();
+  });
+
+  //enable save button if diagram has changed
+  myDiagram.addDiagramListener("Modified", function(e) {
+    if (myDiagram.isModified) {
+      $('.js-saveButton').attr("disabled", false);
+      myDiagram.isModified = false;
+    }
+    else {
+      $('.js-saveButton').attr("disabled", true);
+    }
+  });
+
+  function makeButton(text, action, visiblePredicate) {
+    return GO("ContextMenuButton",
+    GO(go.TextBlock, text),
+    { click: action },
+    visiblePredicate ? new go.Binding("visible", "", visiblePredicate).ofObject() : {});
+  }
 
   var portSize = new go.Size(100, 40);
   var smallsize = new go.Size(10, 10);
 
-  // the node template
-  // includes a panel on each side with an itemArray of panels containing ports
+  //Node template includes a panel on each side with an itemArray of panels containing ports
   myDiagram.nodeTemplate =
 
   GO(go.Node, "Auto",
@@ -105,13 +106,10 @@ $(function(){
     },
     GO(go.Shape, { fill: "white", stroke: "black", strokeWidth: 2 }),
     GO(go.Panel, "Table", {
-      //,
-      //contextMenu: nodeMenu
     },
 
     new go.Binding("location", "loc", go.Point.parse).makeTwoWay(go.Point.stringify),
-
-    // the body
+    //Main panel
     GO(go.Panel, "Auto",
     { row: 1,
       column: 1,
@@ -133,22 +131,19 @@ $(function(){
         editable: false
       },
       new go.Binding("text", "name").makeTwoWay())
-    ),  // end Auto Panel body
-  // the Panel holding the left port elements, which are themselves Panels,
-  // created for each item in the itemArray, bound to data.leftArray
-
+    ),
+    //left ports
     GO(go.Panel, "Vertical",
       new go.Binding("itemArray", "leftArray"),
       { row: 1, column: 0,
         itemTemplate:
         GO(go.Panel,
-          { _side: "left",  // internal property to make it easier to tell which side it's on
+          { _side: "left",
           fromSpot: go.Spot.Left,
           toSpot: go.Spot.Left,
-          fromLinkable: true,
+          fromLinkable: false,
           toLinkable: true,
-          cursor: "pointer"//,
-          //contextMenu: portMenu
+          cursor: "pointer"
         },
       new go.Binding("portId", "portId"),
       GO(go.Shape, "Circle",
@@ -157,43 +152,53 @@ $(function(){
         desiredSize: smallsize,
         margin: new go.Margin(1,0,1,2) },
         new go.Binding("fill", "portColor"))
-      )}  // end itemTemplate
-    ),  // end Vertical Panel
-
-    // the Panel holding the right port elements, which are themselves Panels,
-    // created for each item in the itemArray, bound to data.rightArray
+      )}
+    ),
+    //right ports
     GO(go.Panel, "Vertical",
     new go.Binding("itemArray", "rightArray"),
     { row: 1, column: 2,
       itemTemplate:
       GO(go.Panel,
         { _side: "right",
+        alignment: go.Spot.Right,
+        alignmentFocus: go.Spot.Right,
         fromSpot: go.Spot.Right,
         toSpot: go.Spot.Right,
         fromLinkable: true,
-        toLinkable: true,
-        cursor: "pointer"//,
-        //contextMenu: portMenu
+        toLinkable: false,
+        fromMaxLinks: 1,
+        cursor: "pointer"
       },
       new go.Binding("portId", "portId"),
       GO(go.Shape, "Rectangle",
-      { stroke: null,
+      { alignment: go.Spot.Right,
+        alignmentFocus: go.Spot.Right,
+        stroke: null,
         strokeWidth: 0,
         desiredSize: portSize,
+        //height: portSize.height,
+        stretch: go.GraphObject.Horizontal,
         margin: new go.Margin(1,2,1,0) },
         new go.Binding("fill", "portColor")),
         GO(go.TextBlock,
-          { margin: 10,
-            textAlign: "center",
+          { verticalAlignment: go.Spot.MiddleLeft,
+            margin: new go.Margin(1,0,0,5),
+            textAlign: "left",
+            overflow: go.TextBlock.OverflowEllipsis,
             font: "18px  Segoe UI,sans-serif",
             stroke: "white",
+            //desiredSize: portSize,
+            height: portSize.height,
+            width: portSize.width-5,
             editable: false },
 
             new go.Binding("text", "name").makeTwoWay())
-    )}  // end itemTemplate
-  )  // end Vertical Panel
-));  // end Node
+    )}
+  )
+));
 
+    //new node has this default data
     myDiagram.toolManager.clickCreatingTool.archetypeNodeData = {
       name: "Enter question here.",
       leftArray: [ {"portColor":"black", "portId":"left0", 'name':'connect'} ],
@@ -202,23 +207,13 @@ $(function(){
       bottomArray: [],
     };
 
-    /*myDiagram.contextMenu =
-    GO(go.Adornment, "Vertical",
-    makeButton("Paste",
-    function(e, obj) { e.diagram.commandHandler.pasteSelection(e.diagram.lastInput.documentPoint); },
-    function(o) { return o.diagram.commandHandler.canPasteSelection(); }),
-    makeButton("Undo",
-    function(e, obj) { e.diagram.commandHandler.undo(); },
-    function(o) { return o.diagram.commandHandler.canUndo(); }),
-    makeButton("Redo",
-    function(e, obj) { e.diagram.commandHandler.redo(); },
-    function(o) { return o.diagram.commandHandler.canRedo(); })
-  );*/
   // load the diagram from JSON data
   load();
 
-  // This custom-routing Link class tries to separate parallel links from each other.
-  // This assumes that ports are lined up in a row/column on a side of the node.
+  function load() {
+    myDiagram.model = go.Model.fromJson(document.getElementById("mySavedModel").value);
+  }
+
   function CustomLink() {
     go.Link.call(this);
   };
@@ -242,20 +237,14 @@ $(function(){
         // create a new port data object
         var newportdata = {
           portId: name,
-          //{#          portColor: go.Brush.randomColor()#}
           portColor: 'lightblue',
           name:'NEXT'
-
-          // if you add port data properties here, you should copy them in copyPortData above
         };
-        // and add it to the Array of port data
         myDiagram.model.insertArrayItem(arr, -1, newportdata);
       }
     });
     myDiagram.commitTransaction("addPort");
   }
-  // Remove the clicked port from the node.
-  // Links to the port will be redrawn to the node's shape.
 
   function DragLinkingTool() {
     go.DraggingTool.call(this);
@@ -265,7 +254,6 @@ $(function(){
     this.gridSnapOrigin = new go.Point(5.5, 0);
   }
 
-  // Handle dragging a link specially -- by starting the RelinkingTool on that Link
   /** @override */
   DragLinkingTool.prototype.doActivate = function() {
 
@@ -285,10 +273,7 @@ $(function(){
     } else {
       go.DraggingTool.prototype.doActivate.call(this);
     }
-
-
-  };
-  // end DragLinkingTool
+  }; // end DragLinkingTool
 
   function layout() {
     myDiagram.layoutDiagram(true);
@@ -296,7 +281,6 @@ $(function(){
     });
   }
 
-  // Change the color of the clicked port.
   function changeColor(port) {
     myDiagram.startTransaction("colorPort");
     var data = port.data;
@@ -304,53 +288,12 @@ $(function(){
     myDiagram.commitTransaction("colorPort");
   }
 
-  var textFile = null;
+//*************************
+//EDIT CARD PROPERTIES
+//*************************
 
-  function makeTextFile (text) {
-    var data = new Blob([text], {type: 'application/json'});
-    if (textFile !== null) {
-      window.URL.revokeObjectURL(textFile);
-    }
-    textFile = window.URL.createObjectURL(data);
-    // returns a URL you can use as a href
-    return textFile;
-  };
-
-  // Save the model to / load it from JSON text shown on the page itself, not in a database.
-  function save() {
-    document.getElementById("mySavedModel").value = myDiagram.model.toJson();
-    myDiagram.isModified = false;
-    var create = document.getElementById('create'),
-    textbox = document.getElementById('textbox');
-
-    var link = document.createElement('a');
-    link.setAttribute('download', 'Template.json');
-    link.href = makeTextFile($("#mySavedModel").val());
-    document.body.appendChild(link);
-
-    // wait for the link to be added to the document
-    window.requestAnimationFrame(function () {
-      var event = new MouseEvent('click');
-      link.dispatchEvent(event);
-      document.body.removeChild(link);
-    });
-
-  }
-
-  function load() {
-    myDiagram.model = go.Model.fromJson(document.getElementById("mySavedModel").value);
-    // When copying a node, we need to copy the data that the node is bound to.
-    // This JavaScript object includes properties for the node as a whole, and
-    // four properties that are Arrays holding data for each port.
-    // Those arrays and port data objects need to be copied too.
-    // Thus Model.copiesArrays and Model.copiesArrayObjects both need to be true.
-    // Link data includes the names of the to- and from- ports;
-    // so the GraphLinksModel needs to set these property names:
-    // linkFromPortIdProperty and linkToPortIdProperty.
-  }
-
+  //edit title field on the card
   var editTitleField = false;
-
   $('.js-editTitleText').on('click', function(e){
     $(this).hide();
     $(this).siblings('.js-editTitleField').show();
@@ -362,6 +305,7 @@ $(function(){
 
   $('.js-editTitleField').focusout(function(e){
     if (editTitleField == true) {
+      myDiagram.startTransaction("editTitleField");
       var editedText = ($('.js-editTitleField').val().length == 0) ? "Enter question here." : $('.js-editTitleField').val();
       $('.js-editTitleField').val("");
       $(this).hide();
@@ -369,6 +313,8 @@ $(function(){
       $(this).siblings('.js-editTitleText').html(editedText);
       editTitleField = false;
       if (currentNodeData !== null) myDiagram.model.setDataProperty(currentNodeData, "name", editedText);
+      myDiagram.isModified = true;
+      myDiagram.commitTransaction("editTitleField");
     }
   });
 
@@ -378,6 +324,7 @@ $(function(){
     }
   });
 
+  //edit icon on the card
   var editIconField = false;
   $('.js-editIconOptions').hover(function(e) {
     $('.js-editIconIcon').css("color", "#D16103"); //$saffron
@@ -402,6 +349,7 @@ $(function(){
       editIconField = true;
     }
     else {
+      myDiagram.startTransaction("editIconOptions");
       $('.iconOption').each(function(i) {
         $(this).css("opacity", 0);
         var translatestr = "translate(0px,0px)";
@@ -415,9 +363,12 @@ $(function(){
       $('#selectedIcon').text(selectedIcon);
       e.target.innerText = currentIcon;
       if (currentNodeData !== null) myDiagram.model.setDataProperty(currentNodeData, "card_icon", selectedIcon);
+      myDiagram.isModified = true;
+      myDiagram.commitTransaction("editIconOptions");
     }
   });
 
+  //edit button text
   var editButtonField = false;
 
   $('.js-buttonWrapper').on("click", ".js-editButtonIcon", function(e){
@@ -431,6 +382,7 @@ $(function(){
 
   $('.js-buttonWrapper').on("focusout", function(e){
     if (editButtonField == true) {
+      myDiagram.startTransaction("editButtonWrapper");
       var editedText = $(e.target).val();
       editedText = editedText.toUpperCase()
       $(e.target).val("");
@@ -441,6 +393,8 @@ $(function(){
       editButtonField = false;
       var i = $('.js-editButtonField').index($(e.target));
       if (currentNodeData !== null) myDiagram.model.setDataProperty(currentNodeData.rightArray[i], "name", editedText); //currentNodeData.rightArray[i].name = editedText;
+      myDiagram.isModified = true;
+      myDiagram.commitTransaction("editButtonWrapper");
     }
     layout();
   });
@@ -451,18 +405,45 @@ $(function(){
     }
   });
 
-  function addRightPort() {
-
-  }
-
+  //fix layout of graph
   $('.js-layoutButton').click(function(e) {
     layout();
   });
 
+  //load premade template
   $('.js-loadButton').click(function(e) {
-    load();
+    $(".js-loadButton~.ddButton").toggleClass("show");
   });
 
+  $(".js-loadButton~.ddButton li").click(function(e) {
+    var fileNeeded = '';
+    if ($(this).hasClass("js-loadContactInfo")) fileNeeded = "ContactInfo.json";
+    else if ($(this).hasClass("js-loadDemographics")) fileNeeded = "Demographics.json";
+    else if ($(this).hasClass("js-loadEnd")) fileNeeded = "End.json";
+    myDiagram.startTransaction("loadTemplate");
+    $.ajax({
+       url: '/loadtemplate',
+       type: 'GET',
+       dataType: 'json',
+       data: {
+         payload: fileNeeded,
+         data: 'json'
+       }
+    }).done(function(data) {
+      origJson = JSON.parse(myDiagram.model.toJson());
+      //dataJson = JSON.parse(data);
+      dataJson = data;
+      dataJson.nodeDataArray = dataJson.nodeDataArray.concat(origJson.nodeDataArray);
+      dataJson.linkDataArray = dataJson.linkDataArray.concat(origJson.linkDataArray);
+      myDiagram.model = go.Model.fromJson(dataJson);
+      document.getElementById("mySavedModel").value = JSON.stringify(dataJson);
+    });
+    myDiagram.isModified = true;
+    myDiagram.commitTransaction("loadTemplate");
+    $(".js-loadButton~.ddButton").toggleClass("show");
+  })
+
+  //add rightport to current node
   $('.js-addAnswerButton').click(function(e) {
     addPort("right");
     layout();
@@ -470,6 +451,7 @@ $(function(){
     editButtons(currentRightArray);
   });
 
+  //remove rightport from current node
   $('.js-removeAnswerButton').click(function(e) {
     myDiagram.startTransaction("removePort");
     myDiagram.selection.each(function(node) {
@@ -487,12 +469,14 @@ $(function(){
     else $('.js-removeAnswerButton').attr("disabled", false);
   });
 
+  //add another node to graph
   $('.js-addQuestionButton').click(function(e) {
     var currP = myDiagram.position;
     var p = new go.Point(150+currP.x,50+currP.y);
-    myDiagram.toolManager.clickCreatingTool.insertPart(p);
+    var newPart = myDiagram.toolManager.clickCreatingTool.insertPart(p);
   });
 
+  //remove another node from graph
   $('.js-removeQuestionButton').click(function(e) {
     myDiagram.startTransaction("removeQuestion");
     var removeNodeArr = []
@@ -507,10 +491,55 @@ $(function(){
     layout();
   });
 
+  //show save options to user
   $('.js-saveButton').click(function(e) {
-    save();
+    $(".js-saveButton~.ddButton").toggleClass("show");
+    document.getElementById("mySavedModel").value = myDiagram.model.toJson();
   });
 
+  //download JSON file to local computer
+  var textFile = null;
+  function makeTextFile (text) {
+    var data = new Blob([text], {type: 'application/json'});
+    if (textFile !== null) {
+      window.URL.revokeObjectURL(textFile);
+    }
+    textFile = window.URL.createObjectURL(data);
+    // returns a URL you can use as a href
+    return textFile;
+  };
+  $('.js-saveLocalButton').click(function (e) {
+    var link = document.createElement('a');
+    link.setAttribute('download', 'Template.json');
+    link.href = makeTextFile($("#mySavedModel").val());
+    document.body.appendChild(link);
+    // wait for the link to be added to the document
+    window.requestAnimationFrame(function () {
+      var event = new MouseEvent('click');
+      link.dispatchEvent(event);
+      document.body.removeChild(link);
+		});
+    $(".js-saveButton~.ddButton").toggleClass("show");
+  });
+
+  //save current graph to server
+  $('.js-saveRemoteButton').click(function (e) {
+    myDiagram.startTransaction("save");
+    $.ajax({
+       url: '/savecurrmodel',
+       type: 'GET',
+       dataType: 'json',
+       data: {
+         payload: $("#mySavedModel").val(),
+         data: 'json'
+       }
+    });
+    myDiagram.isModified = false;
+    $(".js-saveButton~.ddButton").toggleClass("show");
+    myDiagram.commitTransaction("save");
+  });
+
+  //update buttons shown on the preview card
   function editButtons(rightArray) {
     var buttonStr = "";
     $(".js-buttonWrapper").empty();
@@ -521,5 +550,13 @@ $(function(){
     }
     $(".js-buttonWrapper").html(buttonStr);
   }
+
+  //if answertype select box changes
+  $(".js-editAnswerType").change(function (e) {
+    myDiagram.startTransaction("editAnswerType");
+    if (currentNodeData !== null) myDiagram.model.setDataProperty(currentNodeData, "answerType", $(".js-editAnswerType option").filter(":selected").val());
+    myDiagram.isModified = true;
+    myDiagram.commitTransaction("editAnswerType");
+  });
 
 });
